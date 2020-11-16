@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<style>
+			.administration {
+				display: none !important;
+			}
+		</style>
+		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+		
+		<style>
+			.NoAnswer {
+				display: none;
+			}
+			
+			.answer { display: none;}
+			.input { display: block;}
+						
+			[data-showanswer="1"] .answer
+			{
+				display: block !important;
+			}	
+			
+			[data-showanswer="1"] .input
+			{
+				display: none !important;
+			}
+			
+			[data-exercice] .answer
+			{
+				width: 100%;
+				border-radius: 3px;
+				background-color: #DFDFDF;
+				padding: 5px 3px;
+			}
+			
+			[data-exercice] .title
+			{
+				font-weight: 600;
+			}
+			
+			[data-success="1"] {
+				background-color: #4CAF50;
+				color: #FFF;
+			}
+			
+			[data-success="0"] {
+				background-color: #EF5350;
+			}
+			
+			[data-success="0"] + .answer {
+				display: block !important;
+				background-color: #EF5350;
+				color: #FFF;
+				font-weight: bold;
+			}
+			
+			.helper {
+				position: fixed;
+				top: 0;
+				right: 0;
+				padding: 10px;
+				background-color: #FFF;
+				border: 1px solid #555;
+				text-align: center;
+				z-index: 2;
+				bottom: 0;
+				overflow: auto;
+				max-width: 100%;
+			}
+			
+			.game, #mainmenu {
+				padding: 20px;
+			}
+			
+			.game { 
+				display: none;
+				position: relative;
+			}
+			
+			#filters {
+				border-bottom: 1px solid #CCC;
+				margin-bottom: 30px;
+				padding: 20px;
+			}
+			
+			.backbutton {
+				margin-bottom: 20px !important;
+			}
+			
+			#exercices {
+				margin-top: 60px;
+			}
+			
+			.menu {
+				position: fixed;
+				top: 0;
+				left: 0;
+				z-index: 1;
+				background-color: #FFF;
+			}
+			
+			.btn {
+				margin: 2px 5px;
+			}
+			
+			
+			@media screen and (max-width: 1000px) {
+				[data-exercice] .row
+				{
+					margin-bottom: 100px;
+				}
+				
+				#exercices {
+					margin-top: 140px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="administration">
+			<input type="file" id="excelfile" />  
+			<input type="button" id="viewfile" value="Export To Table" onclick="ExportToTable()" />  
+			<input type="button" value="Export from loaded" onclick="LoadFromLoaded()" />  
+			<br/>
+			  <br />  
+			  <br /> 
+			<code id="outputJSON"></code> 
+			<table id="output"></table> 
+		</div>
+		<div id="filters">
+			<h2>Filtres</h2>
+			<h6>Sélectionner les sous-classes thérapeutique à étudier, votre sélection sera appliqué lors du chargement d'une activité.</h6>
+			<div id="filters_sousclasse"></div>
+			<h6>Sélectionner les numéros de cartes que vous souhaitez pratiquer (Laisser vide pour toutes les cartes)(Séparer par des virgules et utiliser un tiret( - ) pour choisir une plage (exemple: 1,5-10,24 (les cartes 1, 5 à 10 et 24 seront sélectionnées)).</h6>
+			<div id="filters_card">
+				<input type="text" id="filter_card" placeholder="exemple: 1,5-10,24" />
+			</div>
+			<div style="display: none">
+				<h6>Sélectionner les médicaments ayant au moins un des éléments suivants:</h6>
+				<div id="filters_type">
+				<div class="form-check">
+					<input id="filter_type_teneur" class="form-check-input" type="checkbox"><label class="form-check-label" for="filter_type_teneur">Teneur</label></div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="mainmenu">
+			<h2>Activités</h2>
+			<fieldset>
+				<legend>Sélectionner une activité afin de tester vos connaissances</legend>
+				<input type="button" class="btn btn-primary" value="Tableau complet" onclick="$('#mainmenu').fadeOut(300,function() { $('#Exercice01').fadeIn(300); });" />
+				<ul>
+					<li>Saisir les informations manquantes à partir du nom commercial</li>
+				</ul>
+				<input type="button" class="btn btn-primary" value="Tableau" onclick="$('#mainmenu').fadeOut(300,function() { $('#Exercice02').fadeIn(300); });" />
+				<ul>
+					<li>Saisir les informations manquantes à partir du nom commun</li>
+				</ul>
+				<input type="button" class="btn btn-primary" value="Association" onclick="$('#mainmenu').fadeOut(300,function() { $('#Exercice03').fadeIn(300); });" />
+				<ul>
+					<li>Vous avez une information et devez trouver l'information manquante associé.</li>
+				</ul>
+			</fieldset>
+		</div>
+		
+		<div id="Exercice01" class="game">
+			<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice01').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
+			<h2>Tableau complet</h2>
+			<fieldset>
+				<legend>À partir du nom commercial</legend>
+				<input type="button" class="btn btn-primary" value="Facile" onclick="Exercice01_Facile()" />
+				<ul>
+					<li>Saisir le nom commun</li>
+				</ul>
+				<input type="button" class="btn btn-primary" value="Moyen" onclick="Exercice01_Moyen()" />
+				<ul>
+					<li>Saisir le nom commun, l'indication et la classe légale</li>
+				</ul>
+				<input type="button" class="btn btn-primary" value="Difficile" onclick="Exercice01_Difficile()" />
+				<ul>
+					<li>Saisir le nom commun, l'indication,la classe légale, la forme, la teneur et la voie</li>
+				</ul>
+				<input type="button" class="btn btn-primary" value="Extrême" onclick="Exercice01_Extreme()" />
+				<ul>
+					<li>Saisir toutes les informations, excepté le nom commercial</li>
+				</ul>
+			</fieldset>
+		</div>
+		<div id="Exercice02" class="game">
+			<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice02').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
+			<h2>Tableau</h2>
+			<fieldset>
+				<legend>À partir du nom commun</legend>
+				<input type="button" class="btn btn-primary" value="Facile" onclick="Exercice02_Facile()" />
+				<ul>
+					<li>Saisir au minimum un nom commercial</li>
+				</ul>
+				<input type="button" class="btn btn-primary" value="Moyen" onclick="Exercice02_Moyen()" />
+				<ul>
+					<li>Saisir au minimum un nom commercial, les classes légales et les indications</li>
+				</ul>
+				<input type="button" class="btn btn-primary" value="Difficile" onclick="Exercice02_Difficile()" />
+				<ul>
+					<li>Saisir tous les noms commerciaux</li>
+				</ul>
+				<input type="button" class="btn btn-primary" value="Extrême" onclick="Exercice02_Extreme()" />
+				<ul>
+					<li>Saisir tous les noms commerciaux, les classes légales et les indications</li>
+				</ul>
+			</fieldset>
+		</div>
+		<div id="Exercice03" class="game">
+			<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice03').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
+			<h2>Association</h2>
+			<fieldset>
+				<input type="button" class="btn btn-primary" value="Nom commun (Facile)" onclick="Exercice03_NomCommun_Facile()" />
+				<ul>
+					<li>Vous devez trouver le nom commun a partir du ou des nom commerciaux</li>
+				</ul>
+				<input type="button" class="btn btn-primary" value="Nom commun (Difficile)" onclick="Exercice03_NomCommun_Difficile()" />
+				<ul>
+					<li>Vous devez trouver le nom commun associer a un seul nom commercial</li>
+				</ul>
+				<input type="button" class="btn btn-primary" value="Nom commercial (Facile)" onclick="Exercice03_NomCommercial_Facile()" />
+				<ul>
+					<li>Vous devez trouver un nom commercial a partir du nom commun</li>
+				</ul>
+				<input type="button" class="btn btn-primary" value="Nom commercial (Difficile)" onclick="Exercice03_NomCommercial_Difficile()" />
+				<ul>
+					<li>Vous devez trouver tous les noms commerciaux a partir du nom commun</li>
+				</ul>
+				<input type="button" class="btn btn-primary" value="Teneur" onclick="Exercice03_Teneur()" />
+				<ul>
+					<li>Vous devez trouver les teneurs a partir du nom commercial</li>
+				</ul>
+			</fieldset>
+		</div>
+		
+		<div id="exercices" class="container-fluid"></div>
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.7/xlsx.core.min.js"></script>  
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.core.min.js"></script>  
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+		
+		<div id="data" style="display:none;">
+				[{"num":"1","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACIDE ACETYLSALICYLIQUE","indication":"Douleur,Fièvre,Inflammation","classelegale":"MVL","nomcommercial":"ASPIRIN","forme":"","teneur":"","voie":""},{"num":"1","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACIDE ACETYLSALICYLIQUE","indication":"Douleur,Fièvre,Inflammation","classelegale":"MVL","nomcommercial":"ASAPHEN g","forme":"Co mast.","teneur":"80 mg","voie":"PO"},{"num":"1","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACIDE ACETYLSALICYLIQUE","indication":"Douleur,Fièvre,Inflammation","classelegale":"MVL","nomcommercial":"ASAPHEN EC g","forme":"Co ent.","teneur":"80 mg","voie":"PO"},{"num":"1","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACIDE ACETYLSALICYLIQUE","indication":"Douleur,Fièvre,Inflammation","classelegale":"MVL","nomcommercial":"ENTROPHEN-5 (V)","forme":"Co ent.","teneur":"325 mg","voie":"PO"},{"num":"1","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACIDE ACETYLSALICYLIQUE","indication":"Douleur,Fièvre,Inflammation","classelegale":"MVL","nomcommercial":"ENTROPHEN-10 (X)","forme":"Co ent.","teneur":"650 mg","voie":"PO"},{"num":"1","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACIDE ACETYLSALICYLIQUE","indication":"Douleur,Fièvre,Inflammation","classelegale":"MVL","nomcommercial":"JAMP-ASA EC g","forme":"Co ent.","teneur":"325 mg","voie":"PO"},{"num":"1","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACIDE ACETYLSALICYLIQUE","indication":"Douleur,Fièvre,Inflammation","classelegale":"MVL","nomcommercial":"JAMP-ASA EC g","forme":"Co ent.","teneur":"650 mg","voie":"PO"},{"num":"2","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"CELECOXIB","indication":"Douleur,Inflammation","classelegale":"PR","nomcommercial":"CELEBREX","forme":"","teneur":"","voie":""},{"num":"3","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"DICLOFENAC POTASSIQUE","indication":"Douleur,Inflammation","classelegale":"PR","nomcommercial":"VOLTAREN RAPIDE","forme":"","teneur":"","voie":""},{"num":"4","classe":"SNC","sousclasse":"Analgésiques \net\n Antipyrétiques","nom":"DICLOFENAC SODIQUE","indication":"Douleur,Inflammation","classelegale":"PR","nomcommercial":"VOLTAREN","forme":"","teneur":"","voie":""},{"num":"4","classe":"SNC","sousclasse":"Analgésiques \net\n Antipyrétiques","nom":"DICLOFENAC SODIQUE","indication":"Douleur,Inflammation","classelegale":"PR","nomcommercial":"VOLTAREN SR","forme":"","teneur":"","voie":""},{"num":"5","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"DICLOFENAC SODIQUE + MISOPROSTOL","indication":"Douleur,Inflammation","classelegale":"PR","nomcommercial":"ARTHROTEC","forme":"","teneur":"","voie":""},{"num":"6","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"IBUPROFENE","indication":"Douleur,Fièvre,Inflammation","classelegale":"MVL","nomcommercial":"ADVIL","forme":"","teneur":"200 mg","voie":"PO"},{"num":"6","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"IBUPROFENE","indication":"Douleur,Fièvre,Inflammation","classelegale":"MVL","nomcommercial":"ADVIL X-FORT","forme":"","teneur":"400 mg","voie":"PO"},{"num":"6","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"IBUPROFENE","indication":"Douleur,Fièvre,Inflammation","classelegale":"MVL","nomcommercial":"ADVIL 12 HR","forme":"","teneur":"600 mg","voie":"PO"},{"num":"6","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"IBUPROFENE","indication":"Douleur,Fièvre,Inflammation","classelegale":"PR","nomcommercial":"MOTRIN","forme":"","teneur":"600 mg","voie":"PO"},{"num":"6","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"IBUPROFENE","indication":"Douleur,Fièvre,Inflammation","classelegale":"MVL","nomcommercial":"MOTRIN IB","forme":"","teneur":"200 mg","voie":"PO"},{"num":"6","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"IBUPROFENE","indication":"Douleur,Fièvre,Inflammation","classelegale":"MVL","nomcommercial":"MOTRIN IB ULTRA-FORT","forme":"","teneur":"400 mg","voie":"PO"},{"num":"7","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"NAPROXENE","indication":"Douleur,Inflammation","classelegale":"PR","nomcommercial":"NAPROSYN","forme":"","teneur":"","voie":""},{"num":"7","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"NAPROXENE","indication":"Douleur,Inflammation","classelegale":"PR","nomcommercial":"NAPROSYN E","forme":"","teneur":"","voie":""},{"num":"7","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"NAPROXENE","indication":"Douleur,Inflammation","classelegale":"PR","nomcommercial":"NAPROSYN SR","forme":"","teneur":"","voie":""},{"num":"8","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"CODEINE","indication":"Douleur","classelegale":"N","nomcommercial":"CODEINE","forme":"","teneur":"","voie":""},{"num":"8","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"CODEINE","indication":"Douleur","classelegale":"N","nomcommercial":"CODEINE CONTIN","forme":"","teneur":"","voie":""},{"num":"9","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"FENTANYL","indication":"Douleur","classelegale":"N","nomcommercial":"DURAGESIC","forme":"Timbre cutané","teneur":"","voie":"Topique"},{"num":"10","classe":"SNC","sousclasse":"Analgésiques \net\n Antipyrétiques","nom":"HYDROMORPHONE","indication":"Douleur","classelegale":"N","nomcommercial":"DILAUDID","forme":"Co","teneur":"","voie":"PO"},{"num":"10","classe":"SNC","sousclasse":"Analgésiques \net\n Antipyrétiques","nom":"HYDROMORPHONE","indication":"Douleur","classelegale":"N","nomcommercial":"HYDROMORPH CONTIN","forme":"Caps LA","teneur":"","voie":"PO"},{"num":"11","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"MEPERIDINE","indication":"Douleur","classelegale":"N","nomcommercial":"DEMEROL","forme":"","teneur":"","voie":""},{"num":"12","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"MORPHINE","indication":"Douleur","classelegale":"N","nomcommercial":"M-ESLON","forme":"","teneur":"","voie":""},{"num":"12","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"MORPHINE","indication":"Douleur","classelegale":"N","nomcommercial":"MOS","forme":"","teneur":"","voie":""},{"num":"12","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"MORPHINE","indication":"Douleur","classelegale":"N","nomcommercial":"MOS-SR","forme":"","teneur":"","voie":""},{"num":"12","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"MORPHINE","indication":"Douleur","classelegale":"N","nomcommercial":"MS CONTIN","forme":"","teneur":"","voie":""},{"num":"12","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"MORPHINE","indication":"Douleur","classelegale":"N","nomcommercial":"MS-IR","forme":"","teneur":"","voie":""},{"num":"12","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"MORPHINE","indication":"Douleur","classelegale":"N","nomcommercial":"STATEX","forme":"","teneur":"","voie":""},{"num":"13","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"OXYCODONE","indication":"Douleur","classelegale":"N","nomcommercial":"OXY-IR","forme":"","teneur":"","voie":""},{"num":"13","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"OXYCODONE","indication":"Douleur","classelegale":"N","nomcommercial":"OXYNEO","forme":"","teneur":"","voie":""},{"num":"13","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"OXYCODONE","indication":"Douleur","classelegale":"N","nomcommercial":"SUPEUDOL","forme":"","teneur":"","voie":""},{"num":"14","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"TRAMADOL + ACETAMINOPHENE","indication":"Douleur","classelegale":"PR","nomcommercial":"TRAMACET","forme":"","teneur":"","voie":""},{"num":"15","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE","indication":"Douleur,Fièvre","classelegale":"MVL","nomcommercial":"ABENOL","forme":"","teneur":"","voie":""},{"num":"15","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE","indication":"Douleur,Fièvre","classelegale":"MVL","nomcommercial":"ATASOL ","forme":"","teneur":"","voie":""},{"num":"15","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE","indication":"Douleur,Fièvre","classelegale":"MVL","nomcommercial":"NOVO-GESIC g","forme":"","teneur":"","voie":""},{"num":"15","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE","indication":"Douleur,Fièvre","classelegale":"MVL","nomcommercial":"ATASOL FORTE ","forme":"","teneur":"","voie":""},{"num":"15","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE","indication":"Douleur,Fièvre","classelegale":"MVL","nomcommercial":"NOVO-GESIC FORTE g","forme":"","teneur":"","voie":""},{"num":"15","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE","indication":"Douleur,Fièvre","classelegale":"MVL","nomcommercial":"TEMPRA","forme":"","teneur":"","voie":""},{"num":"15","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE","indication":"Douleur,Fièvre","classelegale":"MVL","nomcommercial":"TYLENOL","forme":"","teneur":"","voie":""},{"num":"15","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE","indication":"Douleur,Fièvre","classelegale":"MVL","nomcommercial":"TYLENOL 8 HEURES","forme":"","teneur":"","voie":""},{"num":"16","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE + CODEINE","indication":"Douleur","classelegale":"N","nomcommercial":"EMPRACET 30","forme":"","teneur":"300-30 mg","voie":""},{"num":"16","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE + CODEINE","indication":"Douleur","classelegale":"N","nomcommercial":"ACET CODEINE 30 g","forme":"","teneur":"300-30 mg","voie":""},{"num":"16","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE + CODEINE","indication":"Douleur","classelegale":"N","nomcommercial":"RATIO-EMTEC g","forme":"","teneur":"300-30 mg","voie":""},{"num":"16","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE + CODEINE","indication":"Douleur","classelegale":"N","nomcommercial":"EMPRACET 60","forme":"","teneur":"300-60 mg","voie":""},{"num":"16","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE + CODEINE","indication":"Douleur","classelegale":"N","nomcommercial":"ACET CODEINE 60 g","forme":"","teneur":"300-60 mg","voie":""},{"num":"16","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE + CODEINE","indication":"Douleur","classelegale":"N","nomcommercial":"TYLENOL NO. 4","forme":"","teneur":"300-60 mg","voie":""},{"num":"17","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE + CODEINE + CAFEINE","indication":"Douleur","classelegale":"N éxonéré","nomcommercial":"TYLENOL NO. 1","forme":"","teneur":"300-8-15 mg","voie":""},{"num":"17","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE + CODEINE + CAFEINE","indication":"Douleur","classelegale":"N","nomcommercial":"TYLENOL NO. 2","forme":"","teneur":"300-15-15 mg","voie":""},{"num":"17","classe":"SNC","sousclasse":"Analgésiques \net\nAntipyrétiques","nom":"ACETAMINOPHENE + CODEINE + CAFEINE","indication":"Douleur","classelegale":"N","nomcommercial":"TYLENOL NO. 3","forme":"","teneur":"300-30-15 mg","voie":""},{"num":"18","classe":"SNC","sousclasse":"Anticonvulsivants","nom":"ACIDE VALPROÏQUE","indication":"Épilepsie","classelegale":"PR","nomcommercial":"DEPAKENE","forme":"","teneur":"","voie":""},{"num":"19","classe":"SNC","sousclasse":"Anticonvulsivants","nom":"CARBAMAZEPINE","indication":"Épilepsie","classelegale":"PR","nomcommercial":"TEGRETOL","forme":"Co","teneur":"","voie":"PO"},{"num":"19","classe":"SNC","sousclasse":"Anticonvulsivants","nom":"CARBAMAZEPINE","indication":"Épilepsie","classelegale":"PR","nomcommercial":"TEGRETOL","forme":"Susp. or.","teneur":"","voie":"PO"},{"num":"19","classe":"SNC","sousclasse":"Anticonvulsivants","nom":"CARBAMAZEPINE","indication":"Épilepsie","classelegale":"PR","nomcommercial":"TEGRETOL CHEWTABS","forme":"Co mast.","teneur":"","voie":"PO"},{"num":"19","classe":"SNC","sousclasse":"Anticonvulsivants","nom":"CARBAMAZEPINE","indication":"Épilepsie","classelegale":"PR","nomcommercial":"TEGRETOL CR","forme":"Co LA","teneur":"","voie":"PO"},{"num":"20","classe":"SNC","sousclasse":"Anticonvulsivants","nom":"CLOBAZAM","indication":"Épilepsie","classelegale":"T/C","nomcommercial":"FRISIUM","forme":"","teneur":"","voie":""},{"num":"21","classe":"SNC","sousclasse":"Anticonvulsivants","nom":"CLONAZEPAM","indication":"Épilepsie","classelegale":"T/C","nomcommercial":"RIVOTRIL","forme":"","teneur":"","voie":""},{"num":"22","classe":"SNC","sousclasse":"Anticonvulsivants","nom":"DIVALPROEX SODIQUE","indication":"Épilepsie","classelegale":"PR","nomcommercial":"EPIVAL","forme":"","teneur":"","voie":""},{"num":"23","classe":"SNC","sousclasse":"Anticonvulsivants","nom":"GABAPENTINE","indication":"Épilepsie","classelegale":"PR","nomcommercial":"NEURONTIN","forme":"","teneur":"","voie":""},{"num":"24","classe":"SNC","sousclasse":"Anticonvulsivants","nom":"LAMOTRIGINE","indication":"Épilepsie","classelegale":"PR","nomcommercial":"LAMICTAL","forme":"","teneur":"","voie":""},{"num":"25","classe":"SNC","sousclasse":"Anticonvulsivants","nom":"LEVETIRACETAM","indication":"Épilepsie","classelegale":"PR","nomcommercial":"KEPPRA","forme":"","teneur":"","voie":""},{"num":"26","classe":"SNC","sousclasse":"Anticonvulsivants","nom":"PHENYTOÏNE","indication":"Épilepsie","classelegale":"PR","nomcommercial":"DILANTIN","forme":"","teneur":"","voie":""},{"num":"27","classe":"SNC","sousclasse":"Anticonvulsivants","nom":"PREGABALINE","indication":"Épilepsie","classelegale":"PR","nomcommercial":"LYRICA","forme":"","teneur":"","voie":""},{"num":"28","classe":"SNC","sousclasse":"Anticonvulsivants","nom":"TOPIRAMATE","indication":"Épilepsie","classelegale":"PR","nomcommercial":"TOPAMAX","forme":"","teneur":"","voie":""}]
+		</div>
+		<script>
+			var ExcludeText = [" EC","-5 (V)","-10 (X)"," SR", " X-FORT", " 12 HR", " IB", " ULTRA-FORT", " E", " g", " 8 HEURES", " FORTE", " 30", " 60", " CR", " CHEWTABS"];
+			var ReplaceInAnswers = [	{ text: ' ', replace: '' },
+										{ text: '.', replace: '' },
+										{ text: 'é', replace: 'e' },
+										{ text: 'è', replace: 'e' },
+										{ text: 'ë', replace: 'e' },
+										{ text: 'ï', replace: 'i' }
+								   ];
+			
+			$(document).ready(function() {
+				GenerateFilters();
+				$('a').parent().remove();
+			});
+			
+			function ValidateWithReplace()
+			{
+				Validate(ReplaceInAnswers);
+			}
+			
+			function Exercice01_Facile()
+			{
+				ExerciceTable("01",1,[null,true,true,false,true,true,true,true,true,true]);
+			}
+			function Exercice01_Moyen()
+			{
+				ExerciceTable("01",2,[null,true,true,false,false,false,true,true,true,true]);
+			}
+			function Exercice01_Difficile()
+			{
+				ExerciceTable("01",3,[null,true,true,false,false,false,true,false,false,false]);
+			}
+			function Exercice01_Extreme()
+			{
+				ExerciceTable("01",4,[null,false,false,false,false,false,true,false,false,false]);
+			}
+			
+			function Exercice02_Facile()
+			{
+				ExerciceTable("02",1,[null,null,null,true,true,true,false,null,null,null],["sousclasse","nom","indication"], null, 1);
+			}
+			
+			function Exercice02_Moyen()
+			{
+				ExerciceTable("02",2,[null,null,null,true,false,false,false,null,null,null],["sousclasse","nom","indication"], null, 1);
+			}
+			
+			function Exercice02_Difficile()
+			{
+				ExerciceTable("02",3,[null,null,null,true,true,true,false,null,null,null],["sousclasse","nom","indication"]);
+			}
+			
+			function Exercice02_Extreme()
+			{
+				ExerciceTable("02",4,[null,null,null,true,false,false,false,null,null,null],["sousclasse","nom","indication"]);
+			}
+			
+			function Exercice03_NomCommun_Facile()
+			{
+				ExerciceTable("03",1,[null,null,null,false,null,null,true,null,null,null],["sousclasse","nom","indication"], null, 1, ["nom"]);
+			}
+			
+			function Exercice03_NomCommun_Difficile()
+			{
+				ExerciceTable("03",3,[null,null,null,false,null,null,true,null,null,null],["sousclasse","nom","indication"], null, 0, ["nom"], [{name: "nomcommercial", result: 1}]);
+			}
+			
+			function Exercice03_NomCommercial_Facile()
+			{
+				ExerciceTable("03",1,[null,null,null,true,null,null,false,null,null,null],["sousclasse","nom","indication"], null, 1, ["nomcommercial"]);
+			}
+			
+			function Exercice03_NomCommercial_Difficile()
+			{
+				ExerciceTable("03",3,[null,null,null,true,null,null,false,null,null,null],["sousclasse","nom","indication"], null, 0, ["nomcommercial"]);
+			}
+			
+			function Exercice03_Teneur()
+			{
+				$('#filter_type_teneur').prop('checked',true);
+				ExerciceTable("03",1,[null,null,null,null,null,null,true,null,false,null], ["sousclasse","nom","indication", "nomcommercial"], null, 0, ["teneur"]);
+				$('#filter_type_teneur').prop('checked',false);
+			}
+			
+			function ReloadExerciceTable()
+			{
+				ExerciceTable(
+					LastExerciceParameter[0],
+					LastExerciceParameter[1],
+					LastExerciceParameter[2],
+					LastExerciceParameter[3],
+					LastExerciceParameter[4],
+					LastExerciceParameter[5],
+					LastExerciceParameter[6],
+					LastExerciceParameter[7]
+				);
+			}
+			
+			var LastExerciceParameter = [];
+			function ExerciceTable(NoQuiz, Difficulty, ShowArr, GroupByNames, removeword, nbGoodAnswer, indices, narrowColumns)
+			{
+				$(window).scrollTop(0);
+				LastExerciceParameter = [NoQuiz, Difficulty, ShowArr, GroupByNames, removeword, nbGoodAnswer, indices, narrowColumns];
+				nbGoodAnswer = nbGoodAnswer ?? 0;
+				var nbQuestion = 0;
+				try{
+					nbQuestion = parseInt(prompt("Entrer le nombre de médicament pour votre questionnaire. \n\n0 pour la liste complète aléatoire\n999 pour la liste complète en ordre.", "10"))
+				}catch(err)
+				{
+					alert("Le choix doit être une valeur numérique entre 0 et 999");
+					return;
+				}
+				
+				var data = null;
+				var datainfo = DataInfo();
+				if((GroupByNames ?? []).length > 0)
+					data = GetDataGroupBy(GroupByNames,nbQuestion,removeword);
+				else
+					data = GetData(nbQuestion);
+					
+				var $exercice = $('<div/>');
+				$exercice.attr('data-exercice',NoQuiz).attr('data-difficulty',Difficulty).attr('data-removeword',((removeword ?? []).length > 0 ? 1 : 0));
+				
+				var $menu = $('<div/>');
+				$menu.addClass("menu");
+				$.each(datainfo, function(index, value)
+				{
+					$menu.append($('<div class="form-check administration"><input type="checkbox" class="form-check-input" value="' + value.value + '" ' + (ShowArr[index] ? 'checked="checked"' : '') + ' id="01_' + value.value + '"><label class="form-check-label" for="01_' + value.value + '">' + value.text + '</label></div>'));
+				});
+				$menu.append('<input id="QuitGame" class="btn btn-danger" style="display: none" type="button" value="Quitter l\'activité" onclick="$(this).css(\'display\',\'none\');$(\'#exercices\').fadeOut(300,function() { $(\'#filters\').fadeIn(300);$($(\'#QuitGame\').attr(\'data-id\')).fadeIn(300); });" />');
+				
+				if((indices ?? []).length > 0)
+				{
+					$menu.append('<input type="button" class="btn btn-primary" value="Voir liste indice" onclick="$(this).next().fadeIn(300)" />')
+					var $indices = $('<div/>');
+					$indices.css('display','none');
+					$indices.addClass('helper');
+					
+					var elements = [];
+					$.each(indices, function(){
+						elements.push([]);
+					});
+					$.each(data, function(index, value) {
+						$.each(indices, function(index2, indice) {
+							elements[index2].push(value[indice]);
+						});
+					});
+					
+					$.each(elements, function(index, value) {
+						var $tbl = $('<table/>');
+						$tbl.append('<tr><th>' + GetDataInfoByName(datainfo, indices[index]).text + '</th></tr>');
+						$.each(getRandom(GetUniqueValues(value),999999), function(index2, value2) {
+							$tbl.append('<tr><td>' + value2 + '</td></tr>');
+						});
+						$indices.append($tbl);
+					});
+					
+					$indices.append('<input type="button" class="btn btn-primary" value="Fermer les indices" onclick="$(this).parent().fadeOut(300)" />');
+					
+					$menu.append($indices);
+				}
+				$menu.append('<input type="button" class="btn btn-info" value="Corriger mon questionnaire" onclick="ValidateWithReplace()" />');
+				$menu.append('<input type="button" class="btn btn-danger" value="Nouveau questionnaire" onclick="ReloadExerciceTable()" />');
+				$menu.append('<i style="padding: 10px;font-size: 12px;">g</i>= Nom générique');
+				
+				var $table = $('<div/>');
+				
+				$.each(ShowArr, function(index, value)
+				{
+					if(value == null)
+					{
+						$table.append('<style>[data-column="' + index + '"] { display: none; }</style>');
+					}
+				});
+				//$table.addClass("container");
+				$.each(data, function(index, value)
+				{
+					var obj = '<div class="title">[TITLE]</div><textarea class="input form-control" data-minimalgoodanswer="' + nbGoodAnswer + '" data-answer="[ANSWER]"></textarea><div class="answer">[ANSWERCLEAN]</div>';
+					var objAlt = '<div class="title">[TITLE] ([NB])</div><textarea class="input form-control" data-minimalgoodanswer="' + nbGoodAnswer + '" data-answer="[ANSWER]"></textarea><div class="answer">[ANSWERCLEAN]</div>';
+					
+					var $row = $('<div/>').addClass("row");
+					
+					var gridData = [];
+					
+					$.each(datainfo, function(index2, value2) {
+						var output = value[value2.name];
+						$.each(narrowColumns, function(index3, value3) {
+							if(value3.name == value2.name)
+							{
+								var results = output.split(',');
+								output = getRandom(results,value3.result).join(',');
+							}
+						});
+						gridData.push({ value: output});
+					});
+					
+					console.log(gridData);
+					
+					$.each(gridData, function(index2, value2) {
+						$row.append($('<div/>')
+										.addClass('col-lg-' + ([2,3,6].includes(index2) ? "2" : "1"))
+										.attr("data-column",index2)
+										.attr("data-showanswer",((ShowArr[index2] ?? true) ? "1" : "0"))
+										.html(([6].includes(index2) ? objAlt : obj)
+												.replace('[TITLE]', datainfo[index2].text)
+												.replace('[ANSWERCLEAN]',value2.value.replaceAll(',','<br/>'))
+												.replace('[ANSWER]',$('<div>' + value2.value + '</div>').text())
+												.replace("[NB]",value2.value.split(',').length)))
+					});
+					
+					$table.append($row);
+				});
+				$exercice.append($menu);
+				$exercice.append($table);
+				$exercice.find('.answer').each(function() {
+					if($(this).text() == "")
+					{
+						$(this).parent().addClass("NoAnswer");
+					}
+				});
+				
+				$exercice.find('.menu input[type="checkbox"]').change(function() {
+					$(this).closest("[data-exercice]").find('[data-column="' + $(this).val() + '"').attr("data-showanswer",($(this).prop('checked') ? "1" : "0"));
+				});
+				
+				$('#exercices').html("");
+				$('#exercices').append($exercice);
+				
+				$('.game').fadeOut(300);
+				$('#filters').fadeOut(300, function() {
+					$('#exercices').fadeIn(300); 
+					$('#QuitGame').attr("data-id","#Exercice" + NoQuiz).fadeIn(300);
+				});
+			}
+			
+			function Validate(replaces)
+			{
+				$('[data-showanswer="0"] .input').each(function()
+				{
+					var ExcludeTextTemp = ($(this).closest('[data-exercice]').attr('data-removeword') == "1" ? ExcludeText : []);
+					var textAnswers = $(this).attr('data-answer').toUpperCase();
+					
+					var textWriten = RemoveWords($(this).val().toUpperCase(),ExcludeTextTemp);
+					
+					var retval = JSON.parse($('#data').text());
+				
+					
+				
+					var answers = textAnswers.split(',');
+					var writen = GetUniqueValues(textWriten.replaceAll('\n',',').split(','));
+					var nbGoodAnswers = 0;
+					
+					$.each(answers, function(index,value) {
+						if(value.lastIndexOf(' G') == value.length - 2)
+						{
+							answers[index] = value.substr(0,value.lastIndexOf(' G'));
+						}
+						$.each(replaces, function(index2, value2) {
+							answers[index] = answers[index].replaceAll(value2.text.toUpperCase(),value2.replace.toUpperCase());
+						});
+					});
+					
+					$.each(writen, function(index,value) {
+						if(value.lastIndexOf(' G') == value.length - 2)
+						{
+							writen[index] = value.substr(0,value.lastIndexOf(' G'));
+						}
+						$.each(replaces, function(index2, value2) {
+							writen[index] = writen[index].replaceAll(value2.text.toUpperCase(),value2.replace.toUpperCase());
+						});
+					});
+					
+					$.each(writen, function(index, value)
+					{
+						nbGoodAnswers += (answers.includes(value) ? 1 : 0)
+					});
+					
+					var minAnswer = $(this).attr('data-minimalgoodanswer');
+					if(minAnswer == 0) minAnswer = answers.length;
+					if(minAnswer <= nbGoodAnswers && nbGoodAnswers == writen.length)
+					{
+						//PASSED
+						$(this).attr('data-success','1');
+					}else{
+						//FAILED
+						$(this).attr('data-success','0');
+					}
+				});
+			}
+			
+			
+			
+			function GetUniqueValues(arr)
+			{
+				var uniqueNames = [];
+				$.each(arr, function(i, el){
+					if($.inArray(el, uniqueNames) === -1 && el != "") uniqueNames.push(el);
+				});
+				return uniqueNames;
+			}
+			
+			function DataInfo()
+			{
+				return [ 
+					{ value: 0, multiline: false, linereplace:'',  name: "num", text: "Numéro" },
+					{ value: 1, multiline: false, linereplace:'',  name: "classe", text: "Classe thérapeuthique" },
+					{ value: 2, multiline: false, linereplace:'',  name: "sousclasse", text: "Sous-classe thérapeuthique" },
+					{ value: 3, multiline: false, linereplace:'',  name: "nom", text: "Nom commun" },
+					{ value: 4, multiline: true, linereplace:',',  name: "indication", text: "Indication" },
+					{ value: 5, multiline: true,  linereplace:'<br/>', name: "classelegale", text: "Classe légale" },
+					{ value: 6, multiline: true,  linereplace:'<br/>', name: "nomcommercial", text: 'Nom commercial' },
+					{ value: 7, multiline: true,  linereplace:'<br/>', name: "forme", text: "Forme"},
+					{ value: 8, multiline: true,  linereplace:'<br/>', name: "teneur", text: "Teneur" },
+					{ value: 9, multiline: true,  linereplace:'<br/>', name: "voie", text: "Voie"}
+				];
+			}
+			
+			function GetDataInfoByName(datainfo, name)
+			{
+				var retval = null;
+				$.each(datainfo, function(index, value)
+				{
+					if(retval == null && value.name == name)
+						retval = value;
+				});
+				return retval;
+			}
+			
+			function GetDataInfoByIndex(datainfo, index)
+			{
+				var retval = null;
+				$.each(datainfo, function(index, value)
+				{
+					if(retval == null && value.value == index)
+						retval = value;
+				});
+				return retval;
+			}
+			
+		
+			function ExportToTable() {  
+			 var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xlsx|.xls)$/;  
+			 /*Checks whether the file is a valid excel file*/  
+			 if (regex.test($("#excelfile").val().toLowerCase())) {  
+				 var xlsxflag = false; /*Flag for checking whether excel is .xls format or .xlsx format*/  
+				 if ($("#excelfile").val().toLowerCase().indexOf(".xlsx") > 0) {  
+					 xlsxflag = true;  
+				 }  
+				 /*Checks whether the browser supports HTML5*/  
+				 if (typeof (FileReader) != "undefined") {  
+					 var reader = new FileReader();  
+					 reader.onload = function (e) {  
+						 var data = e.target.result;  
+						 /*Converts the excel data in to object*/  
+						 if (xlsxflag) {  
+							 var workbook = XLSX.read(data, { type: 'binary' });  
+						 }  
+						 else {  
+							 var workbook = XLS.read(data, { type: 'binary' });  
+						 }  
+						 /*Gets all the sheetnames of excel in to a variable*/  
+						 var sheet_name_list = workbook.SheetNames;  
+		  
+						 var cnt = 0; /*This is used for restricting the script to consider only first sheet of excel*/  
+						 var arrayobj = null;
+						 sheet_name_list.forEach(function (y) { /*Iterate through all sheets*/  
+							 /*Convert the cell value to Json*/  
+							 if (xlsxflag) {  
+								 var exceljson = XLSX.utils.sheet_to_json(workbook.Sheets[y]);  
+							 }  
+							 else {  
+								 var exceljson = XLS.utils.sheet_to_row_object_array(workbook.Sheets[y]);  
+							 }  
+							 if (exceljson.length > 0) {  
+								if(arrayobj == null)
+									arrayobj = ExportToTableX(BindTable(exceljson)); 
+								else{
+									arrayobj = arrayobj.concat(ExportToTableX(BindTable(exceljson)));
+								}
+								cnt++;  
+							 }  
+						 });  
+						 
+						console.log(JSON.stringify(arrayobj));
+						$('#output').show();  
+					 }  
+					 if (xlsxflag) {/*If excel file is .xlsx extension than creates a Array Buffer from excel*/  
+						 reader.readAsArrayBuffer($("#excelfile")[0].files[0]);  
+					 }  
+					 else {  
+						 reader.readAsBinaryString($("#excelfile")[0].files[0]);  
+					 }  
+				 }  
+				 else {  
+					 alert("Sorry! Your browser does not support HTML5!");  
+				 }  
+			 }  
+			 else {  
+				 alert("Please upload a valid Excel file!");  
+			 }  
+		 }  
+		 
+		 function ExportToTableX(arrayobj)
+		 {
+			var $tbl = $('#output');
+				var tr = $('<tr/>');
+				$.each(DataInfo(), function(index2, value2)
+				{
+					tr.append($('<th/>').html(value2.text))
+				});
+				$tbl.append(tr);
+			$.each(arrayobj, function(index, value) {
+				var tr = $('<tr/>');
+				$.each(DataInfo(), function(index2, value2)
+				{
+					tr.append($('<td/>').html(value[value2.name]))
+				});
+				$tbl.append(tr);
+				
+			});
+			
+			return arrayobj;
+		 }
+		 
+		 function BindTable(jsondata) {/*Function used to convert the JSON array to Html Table*/  
+			 var retval = [];
+		 
+			 var columns = BindTableHeader(jsondata); /*Gets all the column headings of Excel*/  
+			 for (var i = 0; i < jsondata.length; i++) {  
+				var lastobj = null;
+				
+				var info = DataInfo();
+				var maxLine = 0;
+				$.each(info, function(index, value)
+				{
+					var datacell = GetDataInfoByName(info, value.name);
+					if(value.multiline)
+					{
+						datacell.data = jsondata[i][columns[value.value]].replace(/(?:\r\n|\r|\n)/g, value.linereplace);
+						if(value.linereplace == '<br/>')
+						{
+							datacell.data = datacell.data.split(value.linereplace);
+							if(maxLine < datacell.data.length)
+								maxLine = datacell.data.length;
+						}
+					}else{
+						datacell.data = jsondata[i][columns[value.value]];
+					}
+				});
+				
+				for(var x = 0; x < maxLine; ++x)
+				{
+					var obj = {};
+					$.each(info, function(index, value)
+					{
+						if(value.multiline && value.linereplace == '<br/>')
+						{
+							if(x < value.data.length) 	obj[value.name] = (value.data[x] != "" ? value.data[x] : lastobj[value.name]);
+							else						obj[value.name] = lastobj[value.name];
+						}
+						else
+						{
+							obj[value.name] = value.data;
+						}
+						
+						if(obj[value.name].indexOf("----") >= 0) obj[value.name] = "";
+					});
+					
+					lastobj = Object.assign({}, obj);
+					retval.push(lastobj);
+				}
+			 }  
+			 return retval;
+		 }  
+		 function BindTableHeader(jsondata) {/*Function used to get all column names from JSON and bind the html table header*/  
+			 var columnSet = [];  
+			 for (var i = 0; i < jsondata.length; i++) {  
+				 var rowHash = jsondata[i];  
+				 for (var key in rowHash) {  
+					 if (rowHash.hasOwnProperty(key)) {  
+						 if ($.inArray(key, columnSet) == -1) {/*Adding each unique column names to a variable array*/  
+							 columnSet.push(key);  
+						 }  
+					 }  
+				 }  
+			 }  
+			 //$(tableid).append(headerTr$);  
+			 console.log(columnSet);
+			 return columnSet;  
+		 }  
+		 
+			function RemoveWords(text, arr)
+			{
+				$.each(arr, function(index, value) {
+					text = text.replaceAll(value, "");
+				});
+				
+				return text;
+			}
+			
+			function GetDataGroupBy(names, nbData, removeword)
+			{
+				var Data = GetData(999999);
+				var datainfo = DataInfo();
+				
+				var newData = [];
+				
+				$.each(Data, function(index, value) {
+					var key = "";
+					$.each(names, function(index2, value2) {
+						key += value[value2];
+					});
+					
+					if(newData[key] == undefined)
+					{
+						newData[key] = {};
+						$.each(datainfo, function(index2, value2)
+						{
+							if(names.includes(value2.name))
+							{
+								newData[key][value2.name] = value[value2.name];
+							}
+							else
+							{
+								newData[key][value2.name] = "";
+							}
+						});
+					}
+					
+					$.each(datainfo, function(index2, value2)
+					{
+						if(names.includes(value2.name)) return;
+						
+						var text = RemoveWords(value[value2.name], removeword);
+		
+						if(text != "" && !newData[key][value2.name].split(',').includes(text))
+							newData[key][value2.name] += (newData[key][value2.name] != "" ? "," : "") + text;
+					});
+				});
+				
+				var retval = [];
+				
+				for (var key in newData) {
+					retval.push(newData[key]);
+				}				
+				
+				if((nbData ?? 0) > 0 && (nbData ?? 0) < 999)
+					return getRandom(retval,nbData); 
+				
+				if(nbData ?? 0 >= 999)
+					return retval;
+					
+				return getRandom(retval,999999); 
+			}	
+			
+			function CreateGuid() {  
+			   function _p8(s) {  
+				  var p = (Math.random().toString(16)+"000000000").substr(2,8);  
+				  return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;  
+			   }  
+			   return _p8() + _p8(true) + _p8(true) + _p8();  
+			} 
+			
+			var FilterData = true;
+			function GenerateFilters()
+			{
+				FilterData = false;
+				var sousclasses = [];
+				$.each(GetData(), function(index, value){
+					if(!sousclasses.includes(value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","")))
+					{
+						sousclasses.push(value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""));
+						var guid = CreateGuid();
+						$("#filters_sousclasse").append('<div class="form-check"><input id="' + guid + '" class="filter_sousclasse form-check-input" type="checkbox" value="' + value.sousclasse + '" checked="checked"/><label class="form-check-label" for="' + guid + '">' + value.sousclasse + '</label>');
+					}
+				});
+				
+				FilterData = true;
+			}
+			
+			function GetData(nbData) { 
+				var retval = JSON.parse($('#data').text());
+				
+				$.each(retval, function(index,value) {
+					if(value.nomcommercial.lastIndexOf(' g') == value.nomcommercial.length - 2)
+					{
+						value.nomcommercial = value.nomcommercial.substr(0,value.nomcommercial.lastIndexOf(' g')) + ' <i style="font-size: 12px;">g</i>';
+					}
+				});
+				
+				if(FilterData)
+				{
+					var newData = [];
+					$('.filter_sousclasse').each(function(){
+						var $self = $(this);
+						if($self.prop('checked'))
+						{
+							$.each(retval, function(index, value)
+							{
+								if(value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","") == $self.val().replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""))
+								{
+									newData.push(value);
+								}
+							});
+						}
+					});
+					retval = newData;
+					if($('#filter_card').val() != "")
+					{
+						newData = [];
+						$.each($('#filter_card').val().split(","), function(index, value) {
+							if(value != "")
+							{
+								$.each(retval, function(index2, value2)
+								{
+									var range = value.split("-");
+									if(range.length == 1){
+										if(parseInt(value2.num) == parseInt(range[0]))
+											newData.push(value2);
+											
+									}else if(range.length == 2){
+										if(value2.num >= parseInt(range[0]) && value2.num <= parseInt(range[1]))
+											newData.push(value2);
+									}
+								});
+							}
+						});
+						retval = newData;
+					}
+					
+					
+					
+					if($('#filter_type_teneur').prop('checked')){
+						newData = [];
+						$.each(retval, function(index, value)
+						{
+							if(value.teneur != "")
+								newData.push(value);
+						});
+						retval = newData;
+					}
+				}
+				
+				if((nbData ?? 0) > 0 && (nbData ?? 0) < 999)
+					retval = getRandom(retval,nbData); 
+				
+				if((nbData ?? 0) == 0)
+					retval = getRandom(retval,999999); 
+				
+				return retval;
+			}
+			
+			function getRandom(arr, n) {
+				var len = arr.length;
+				if (n > len)
+					n = len;
+				var result = new Array(n),
+					taken = new Array(len);
+				while (n--) {
+					var x = Math.floor(Math.random() * len);
+					result[n] = arr[x in taken ? taken[x] : x];
+					taken[x] = --len in taken ? taken[len] : len;
+				}
+				return result;
+			}
+		</script>
+	</body>
+</html>
