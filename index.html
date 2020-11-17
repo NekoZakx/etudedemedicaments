@@ -814,12 +814,22 @@
 			   return _p8() + _p8(true) + _p8(true) + _p8();  
 			} 
 			
+			function compareCardsNum( a, b ) {
+			  if ( a.num < b.num ){
+				return -1;
+			  }
+			  if ( a.num > b.num ){
+				return 1;
+			  }
+			  return 0;
+			}
+				   
 			var FilterData = true;
 			function GenerateFilters()
 			{
 				FilterData = false;
 				var sousclasses = [];
-				$.each(GetData(), function(index, value){
+				$.each(GetData().sort(compareCardsNum), function(index, value){
 					if(!sousclasses.includes(value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","")))
 					{
 						sousclasses.push(value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""));
