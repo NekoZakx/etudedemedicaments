@@ -223,19 +223,23 @@
 				</ul>
 				<input type="button" class="btn btn-primary" value="Nom commun (Difficile)" onclick="Exercice03_NomCommun_Difficile()" />
 				<ul>
-					<li>Vous devez trouver le nom commun associer a un seul nom commercial</li>
+					<li>Vous devez trouver le nom commun associer à un seul nom commercial</li>
 				</ul>
 				<input type="button" class="btn btn-primary" value="Nom commercial (Facile)" onclick="Exercice03_NomCommercial_Facile()" />
 				<ul>
-					<li>Vous devez trouver un nom commercial a partir du nom commun</li>
+					<li>Vous devez trouver un nom commercial à partir du nom commun</li>
 				</ul>
 				<input type="button" class="btn btn-primary" value="Nom commercial (Difficile)" onclick="Exercice03_NomCommercial_Difficile()" />
 				<ul>
-					<li>Vous devez trouver tous les noms commerciaux a partir du nom commun</li>
+					<li>Vous devez trouver tous les noms commerciaux à partir du nom commun</li>
 				</ul>
 				<input type="button" class="btn btn-primary" value="Teneur" onclick="Exercice03_Teneur()" />
 				<ul>
-					<li>Vous devez trouver les teneurs a partir du nom commercial</li>
+					<li>Vous devez trouver les teneurs à partir du nom commercial</li>
+				</ul>
+				<input type="button" class="btn btn-primary" value="Sous-classe thérapeutique" onclick="Exercice03_SousClasse()" />
+				<ul>
+					<li>Vous devez trouver la sous-classe thérapeutique à partir du nom commun</li>
 				</ul>
 			</fieldset>
 		</div>
@@ -333,6 +337,27 @@
 				$('#filter_type_teneur').prop('checked',true);
 				ExerciceTable("03",1,[null,null,null,null,null,null,true,null,false,null], ["sousclasse","nom","indication", "nomcommercial"], null, 0, ["teneur"]);
 				$('#filter_type_teneur').prop('checked',false);
+			}
+			
+			function Exercice03_SousClasse()
+			{
+				ExerciceTable("03",1,[null,null,false,true,null,null,null,null,null,null], ["sousclasse","nom","indication", "nomcommercial"], null, 0, ["sousclasse"]);
+			}
+			
+			function DataInfo()
+			{
+				return [ 
+					{ value: 0, multiline: false, linereplace:'',  name: "num", text: "Numéro" },
+					{ value: 1, multiline: false, linereplace:'',  name: "classe", text: "Classe thérapeuthique" },
+					{ value: 2, multiline: false, linereplace:'',  name: "sousclasse", text: "Sous-classe thérapeuthique" },
+					{ value: 3, multiline: false, linereplace:'',  name: "nom", text: "Nom commun" },
+					{ value: 4, multiline: true, linereplace:',',  name: "indication", text: "Indication" },
+					{ value: 5, multiline: true,  linereplace:'<br/>', name: "classelegale", text: "Classe légale" },
+					{ value: 6, multiline: true,  linereplace:'<br/>', name: "nomcommercial", text: 'Nom commercial' },
+					{ value: 7, multiline: true,  linereplace:'<br/>', name: "forme", text: "Forme"},
+					{ value: 8, multiline: true,  linereplace:'<br/>', name: "teneur", text: "Teneur" },
+					{ value: 9, multiline: true,  linereplace:'<br/>', name: "voie", text: "Voie"}
+				];
 			}
 			
 			function ReloadExerciceTable()
@@ -491,7 +516,7 @@
 				$('[data-showanswer="0"] .input').each(function()
 				{
 					var ExcludeTextTemp = ($(this).closest('[data-exercice]').attr('data-removeword') == "1" ? ExcludeText : []);
-					var textAnswers = $(this).attr('data-answer').toUpperCase();
+					var textAnswers = $(this).attr('data-answer').toUpperCase().replaceAll('\n','').replaceAll('\t','').replaceAll('\r','');
 					
 					var textWriten = RemoveWords($(this).val().toUpperCase(),ExcludeTextTemp);
 					
@@ -550,22 +575,6 @@
 					if($.inArray(el, uniqueNames) === -1 && el != "") uniqueNames.push(el);
 				});
 				return uniqueNames;
-			}
-			
-			function DataInfo()
-			{
-				return [ 
-					{ value: 0, multiline: false, linereplace:'',  name: "num", text: "Numéro" },
-					{ value: 1, multiline: false, linereplace:'',  name: "classe", text: "Classe thérapeuthique" },
-					{ value: 2, multiline: false, linereplace:'',  name: "sousclasse", text: "Sous-classe thérapeuthique" },
-					{ value: 3, multiline: false, linereplace:'',  name: "nom", text: "Nom commun" },
-					{ value: 4, multiline: true, linereplace:',',  name: "indication", text: "Indication" },
-					{ value: 5, multiline: true,  linereplace:'<br/>', name: "classelegale", text: "Classe légale" },
-					{ value: 6, multiline: true,  linereplace:'<br/>', name: "nomcommercial", text: 'Nom commercial' },
-					{ value: 7, multiline: true,  linereplace:'<br/>', name: "forme", text: "Forme"},
-					{ value: 8, multiline: true,  linereplace:'<br/>', name: "teneur", text: "Teneur" },
-					{ value: 9, multiline: true,  linereplace:'<br/>', name: "voie", text: "Voie"}
-				];
 			}
 			
 			function GetDataInfoByName(datainfo, name)
