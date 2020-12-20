@@ -863,7 +863,7 @@
 					if(lastNum != value.num)
 					{
 						lastNum = value.num;
-						if(value[name] == text)
+						if(value[name].replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","") == text.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""))
 						{
 							retval += 1;
 						}
