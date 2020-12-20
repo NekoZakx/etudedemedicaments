@@ -853,26 +853,48 @@
 			  }
 			  return 0;
 			}
-						
+			
+			function CountElements(name, text)
+			{
+				var retval = 0;
+				var lastNum = -1;
+				$.each(GetData().sort(compareCardsID),function(index,value)
+				{
+					if(lastNum != value.num)
+					{
+						lastNum = value.num;
+						if(value[name] == text)
+						{
+							retval += 1;
+						}
+					}
+				});
+				
+				return retval;
+			}
+		
 			var FilterData = true;
 			function GenerateFilters()
 			{
 				FilterData = false;
 				var sousclasses = [];
 				var classes = [];
-				$.each(GetData().sort(compareCardsID), function(index, value){
+				var data = GetData().sort(compareCardsID);
+				$.each(data, function(index, value){
 					if(!classes.includes(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","")))
 					{
 						classes.push(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""));
 						var guid = CreateGuid();
-						$("#filters_sousclasse").append('<div class="form-check"><input id="' + guid + '" class="form-check-input" onclick="ClearClassCategory($(this))" type="checkbox" value="' + value.classe + '" checked="checked"/><label class="form-check-label" for="' + guid + '">' + (value.classe != "" ? value.classe : "Aucune classe") + '</label>');
+						$("#filters_sousclasse").append('<div class="form-check"><input id="' + guid + '" class="form-check-input" onclick="ClearClassCategory($(this))" type="checkbox" value="' + value.classe + '" checked="checked"/><label class="form-check-label" for="' + guid + '">' + 
+							(value.classe != "" ? value.classe : "Aucune classe") + " (" + CountElements("classe", value.classe) + ")" + '</label>');
 					}
 				
 					if(!sousclasses.includes(value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","")))
 					{
 						sousclasses.push(value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""));
 						var guid = CreateGuid();
-						$("#filters_sousclasse").append('<div class="form-check" data-parent="' + value.classe + '"><input id="' + guid + '" class="filter_sousclasse form-check-input" type="checkbox" value="' + value.sousclasse + '" checked="checked"/><label class="form-check-label" for="' + guid + '">' + (value.sousclasse != "" ? value.sousclasse : "Aucune sous-classe") + '</label>');
+						$("#filters_sousclasse").append('<div class="form-check" data-parent="' + value.classe + '"><input id="' + guid + '" class="filter_sousclasse form-check-input" type="checkbox" value="' + value.sousclasse + '" checked="checked"/><label class="form-check-label" for="' + guid + '">' + 
+							(value.sousclasse != "" ? value.sousclasse : "Aucune sous-classe") + " (" + CountElements("sousclasse", value.sousclasse) + ")" + '</label>');
 					}
 				});
 				
