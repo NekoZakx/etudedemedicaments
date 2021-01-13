@@ -148,6 +148,7 @@
 				<div id="filters_type">
 				<div class="form-check">
 					<input id="filter_type_teneur" class="form-check-input" type="checkbox"><label class="form-check-label" for="filter_type_teneur">Teneur</label></div>
+					<input id="filter_type_forme" class="form-check-input" type="checkbox"><label class="form-check-label" for="filter_type_forme">Forme</label></div>
 				</div>
 			</div>
 		</div>
@@ -241,7 +242,7 @@
 				<ul>
 					<li>Vous devez trouver les teneurs à partir du nom commercial et de la forme</li>
 				</ul>
-				<input type="button" class="btn btn-primary" value="Teneur" onclick="Exercice03_Forme()" />
+				<input type="button" class="btn btn-primary" value="Forme" onclick="Exercice03_Forme()" />
 				<ul>
 					<li>Vous devez trouver les formes à partir du nom commercial et de la teneur</li>
 				</ul>
@@ -354,7 +355,9 @@
 			
 			function Exercice03_Forme()
 			{
+				$('#filter_type_forme').prop('checked',true);
 				ExerciceTable("03",1,[null,null,null,null,null,null,true,false,true,null], ["sousclasse","nom","indication", "nomcommercial"], null, 0, ["forme"]);
+				$('#filter_type_forme').prop('checked',false);
 			}
 			
 			function DataInfo()
@@ -473,7 +476,6 @@
 					var $row = $('<div/>').addClass("row");
 					
 					var gridData = [];
-					
 					$.each(datainfo, function(index2, value2) {
 						if(value2.value == -1) return;
 						var output = value[value2.name];
@@ -972,6 +974,15 @@
 						$.each(retval, function(index, value)
 						{
 							if(value.teneur != "")
+								newData.push(value);
+						});
+						retval = newData;
+					}
+					if($('#filter_type_forme').prop('checked')){
+						newData = [];
+						$.each(retval, function(index, value)
+						{
+							if(value.forme != "")
 								newData.push(value);
 						});
 						retval = newData;
