@@ -122,6 +122,17 @@
 					margin-top: 140px;
 				}
 			}
+			
+			.group {
+				display: inline-block;
+				margin-right: 5px;
+				min-width: 100px;
+			}
+			
+			.droppable  {
+				padding-bottom: 200px;
+				background-color: #DDD;
+			}
 		</style>
 	</head>
 	<body>
@@ -169,6 +180,10 @@
 				<input type="button" class="btn btn-primary" value="Association" onclick="$('#mainmenu').fadeOut(300,function() { $('#Exercice03').fadeIn(300); });" />
 				<ul>
 					<li>Vous avez une information et devez trouver l'information manquante associé.</li>
+				</ul>
+				<input type="button" class="btn btn-primary" value="Glisser déplacer" onclick="$('#mainmenu').fadeOut(300,function() { $('#Exercice04').fadeIn(300); });" />
+				<ul>
+					<li>Vous devez déplacer les réponses dans les bonnes sections.</li>
 				</ul>
 			</fieldset>
 		</div>
@@ -250,6 +265,16 @@
 				<input type="button" class="btn btn-primary" value="Sous-classe thérapeutique" onclick="Exercice03_SousClasse()" />
 				<ul>
 					<li>Vous devez trouver la sous-classe thérapeutique à partir du nom commun</li>
+				</ul>
+			</fieldset>
+		</div>
+		<div id="Exercice04" class="game">
+			<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice04').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
+			<h2>Glisser déplacer</h2>
+			<fieldset>
+				<input type="button" class="btn btn-primary" value="Classe et nom commun" onclick="Exercice04_Niveau1()" />
+				<ul>
+					<li>Vous devez trouver le nom commun à partir du ou des nom commerciaux</li>
 				</ul>
 			</fieldset>
 		</div>
@@ -356,6 +381,11 @@
 			function Exercice03_Forme()
 			{
 				ExerciceTable("03",1,[null,null,null,null,null,null,true,false,true,null], ["sousclasse","nom","indication", "nomcommercial"], null, 0, ["forme"],null,1);
+			}
+			
+			function Exercice04_Niveau1()
+			{
+				ExerciceDragable("04",1,"classe","nom");
 			}
 			
 			function DataInfo()
@@ -576,6 +606,105 @@
 				if(special == 1) { $('#filter_type_forme').prop('checked',false); }
 				if(special == 2) { $('#filter_type_teneur').prop('checked',false);}
 			}
+			
+			
+			function ExerciceDragable(NoQuiz, Difficulty, Group, Classify, special)
+			{
+				if(special == 1) { $('#filter_type_forme').prop('checked',true); }
+				if(special == 2) { $('#filter_type_teneur').prop('checked',true);}
+				$(window).scrollTop(0);
+				LastExerciceParameter = [NoQuiz, Difficulty, Group, Classify, special];
+				var nbQuestion = 0;
+				try{
+					nbQuestion = parseInt(prompt("Entrer le nombre de médicament pour votre questionnaire. \n\n0 pour la liste complète aléatoire\n999 pour la liste complète en ordre.", "0"))
+				}catch(err)
+				{
+					alert("Le choix doit être une valeur numérique entre 0 et 999");
+					return;
+				}
+				
+				var data = GetDataGroupBy([Group,Classify],nbQuestion);
+				var datainfo = DataInfo();
+					
+				var $exercice = $('<div/>');
+				$exercice.attr('data-exercice',NoQuiz).attr('data-difficulty',Difficulty);
+				
+				var $menu = $('<div/>');
+				$menu.addClass("menu");
+				$menu.append('<input id="QuitGame" class="btn btn-danger" style="display: none" type="button" value="Quitter l\'activité" onclick="$(this).css(\'display\',\'none\');$(\'#exercices\').fadeOut(300,function() { $(\'#filters\').fadeIn(300);$($(\'#QuitGame\').attr(\'data-id\')).fadeIn(300); });" />');
+				
+				
+				$menu.append('<input type="button" class="btn btn-info" value="Corriger mon questionnaire" onclick="ValidateWithReplace()" />');
+				$menu.append('<input type="button" class="btn btn-danger" value="Nouveau questionnaire" onclick="ReloadExerciceDragable()" />');
+				$menu.append('<i style="padding: 10px;font-size: 12px;">g</i>= Nom générique');
+				
+				
+				
+				var $table = $('<div/>');
+				var groups = [];
+				var values = {};
+				$.each(data, function(index, value)
+				{
+					if(!groups.includes(value[Group]))
+					{
+						groups.push(value[Group]);
+						values[value[Group]] = [];
+					}
+					values[value[Group]].push(value[Classify]);
+				});
+				
+				var $results = $('<div/>');
+				$.each(groups, function(index,value)
+				{
+					$table.append('<div class="group"><div class="header">' + value + '</div><div class="droppable" data-accept="' + value + '"></div></div>');
+					$.each(values[value], function(index2,value2)
+					{
+						$results.append('<div class="draggable" data-answer="' + value + '">' + value2 + '</div>');
+					});
+				});
+				
+				$exercice.append($menu);
+				$exercice.append($table);
+				$exercice.append($results);
+				/*$exercice.find('.answer').each(function() {
+					if($(this).text() == "")
+					{
+						$(this).parent().addClass("NoAnswer");
+					}
+				});*/
+				
+				$exercice.find('.menu input[type="checkbox"]').change(function() {
+					$(this).closest("[data-exercice]").find('[data-column="' + $(this).val() + '"').attr("data-showanswer",($(this).prop('checked') ? "1" : "0"));
+				});
+				
+				$('#exercices').html("");
+				$('#exercices').append($exercice);
+				
+				$( ".draggable" ).draggable({ revert: "invalid" });
+				$( ".droppable" ).each(function(index,value) {
+					$(this).droppable({
+						accept: '[data-answer="' + $(this).attr("data-accept")  + '"]',
+						/*classes: {
+							"ui-droppable-active": "ui-state-active",
+							"ui-droppable-hover": "ui-state-hover"
+						}*/
+					});
+				});
+				
+				
+				$('.game').fadeOut(300);
+				$('#filters').fadeOut(300, function() {
+					$('#exercices').fadeIn(300); 
+					$('#QuitGame').attr("data-id","#Exercice" + NoQuiz).fadeIn(300);
+				});
+				
+				if(special == 1) { $('#filter_type_forme').prop('checked',false); }
+				if(special == 2) { $('#filter_type_teneur').prop('checked',false);}
+			}
+			
+			
+			
+			
 			
 			function Validate(replaces)
 			{
@@ -956,10 +1085,10 @@
 							(value.classe != "" ? value.classe : "Aucune classe") + " (" + CountElements("classe", value.classe) + ")" + '</label>');
 					}
 				
-					if(!sousclasses.includes(value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","")))
+					if(!sousclasses.includes(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","") + "." + value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","")))
 					{
 						
-						sousclasses.push(value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""));
+						sousclasses.push(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","") + "." + value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""));
 						var guid = CreateGuid();
 						$("#filters_sousclasse").append('<div class="form-check" style="' + ($('#HideSousClasse').prop('checked') ? "display: none;" : "") + '" data-parent="' + value.classe + '"><input id="' + guid + '" class="filter_sousclasse form-check-input" type="checkbox" value="' + value.sousclasse + '" checked="checked"/><label class="form-check-label" for="' + guid + '">' + 
 							(value.sousclasse != "" ? value.sousclasse : "Aucune sous-classe") + " (" + CountElements("sousclasse", value.sousclasse) + ")" + '</label>');
