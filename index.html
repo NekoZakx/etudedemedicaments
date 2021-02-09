@@ -133,6 +133,14 @@
 				padding-bottom: 200px;
 				background-color: #DDD;
 			}
+			.toggle{
+				position: absolute;
+				left: -15px;
+				top: 0;
+			}
+			.parentFilter {
+				position: relative;
+			}
 		</style>
 	</head>
 	<body>
@@ -1070,7 +1078,14 @@
 			function GenerateFilters()
 			{
 				$('#HideSousClasse').change(function(){
-					$('.form-check[data-parent]').slideToggle();
+					if($('#HideSousClasse').prop('checked'))
+					{
+						$('.form-check[data-parent]').slideUp();
+						$('[data-class]').html("+");
+					}else{
+						$('.form-check[data-parent]').slideDown();
+						$('[data-class]').html("-");
+					}
 				});
 				FilterData = false;
 				var sousclasses = [];
@@ -1081,18 +1096,27 @@
 					{
 						classes.push(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""));
 						var guid = CreateGuid();
-						$("#filters_sousclasse").append('<div class="form-check"><input id="' + guid + '" class="form-check-input" onclick="ClearClassCategory($(this))" type="checkbox" value="' + value.classe + '" checked="checked"/><label class="form-check-label" for="' + guid + '">' + 
+						$("#filters_sousclasse").append('<div class="parentFilter form-check"><span class="toggle" data-class="' + value.classe + '">+</span><input id="' + guid + '" class="form-check-input" onclick="ClearClassCategory($(this))" type="checkbox" value="' + value.classe + '" checked="checked"/><label class="form-check-label" for="' + guid + '">' + 
 							(value.classe != "" ? value.classe : "Aucune classe") + " (" + CountElements("classe", value.classe) + ")" + '</label>');
 					}
 				
 					if(!sousclasses.includes(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","") + "." + value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","")))
 					{
-						
 						sousclasses.push(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","") + "." + value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""));
 						var guid = CreateGuid();
-						$("#filters_sousclasse").append('<div class="form-check" style="' + ($('#HideSousClasse').prop('checked') ? "display: none;" : "") + '" data-parent="' + value.classe + '"><input id="' + guid + '" class="filter_sousclasse form-check-input" type="checkbox" value="' + value.sousclasse + '" checked="checked"/><label class="form-check-label" for="' + guid + '">' + 
+						$("#filters_sousclasse").append('<div class="childfilter form-check" style="' + ($('#HideSousClasse').prop('checked') ? "display: none;" : "") + '" data-parent="' + value.classe + '"><input id="' + guid + '" class="filter_sousclasse form-check-input" type="checkbox" value="' + (value.sousclasse != "" ? value.sousclasse : value.classe) + '" checked="checked"/><label class="form-check-label" for="' + guid + '">' + 
 							(value.sousclasse != "" ? value.sousclasse : "Aucune sous-classe") + " (" + CountElements("sousclasse", value.sousclasse) + ")" + '</label>');
 					}
+				});
+				
+				$('[data-class]').click(function(){
+					if($('.form-check[data-parent="' + $(this).attr('data-class') + '"]').css('display') == "none")
+					{
+						$(this).html("-");
+					}else{
+						$(this).html("+");
+					}
+					$('.form-check[data-parent="' + $(this).attr('data-class') + '"]').slideToggle();
 				});
 				
 				FilterData = true;
@@ -1122,7 +1146,7 @@
 						{
 							$.each(retval, function(index, value)
 							{
-								if(value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","") == $self.val().replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""))
+								if((value.sousclasse != "" ? value.sousclasse : value.classe).replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","") == $self.val().replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""))
 								{
 									newData.push(value);
 								}
