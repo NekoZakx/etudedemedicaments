@@ -158,7 +158,7 @@
 		<div id="filters">
 			<h2>Filtres</h2>
 			<h6>Sélectionner les sous-classes thérapeutique à étudier, votre sélection sera appliqué lors du chargement d'une activité.</h6>
-			<input type="checkbox" id="HideSousClasse" checked="checked"><label for="HideSousClasse">Cacher les sous-classes</label>
+			<input type="checkbox" id="HideSousClasse" checked="checked"><label for="HideSousClasse">Activer tous les filtres</label>
 			<div id="filters_sousclasse"></div>
 			<h6>Sélectionner les numéros de cartes que vous souhaitez pratiquer (Laisser vide pour toutes les cartes)(Séparer par des virgules et utiliser un tiret( - ) pour choisir une plage (exemple: 1,5-10,24 (les cartes 1, 5 à 10 et 24 seront sélectionnées)).</h6>
 			<div id="filters_card">
@@ -1123,14 +1123,16 @@
 			function GenerateFilters()
 			{
 				$('#HideSousClasse').change(function(){
-					if($('#HideSousClasse').prop('checked'))
+					
+					$('#filters_sousclasse input[type=checkbox]').prop('checked',$('#HideSousClasse').prop('checked'));
+					/*if($('#HideSousClasse').prop('checked'))
 					{
 						$('.form-check[data-parent]').slideUp();
 						$('[data-class]').html("+");
 					}else{
 						$('.form-check[data-parent]').slideDown();
 						$('[data-class]').html("-");
-					}
+					}*/
 				});
 				FilterData = false;
 				var sousclasses = [];
