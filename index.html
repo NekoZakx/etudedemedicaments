@@ -126,13 +126,18 @@
 			.group {
 				display: inline-block;
 				margin-right: 5px;
-				min-width: 100px;
+				min-width: 150px;
+				max-width: 150px;
+				margin-right: 5px;
 			}
 			
 			.droppable  {
-				padding-bottom: 200px;
+				min-height: 50px;
+				max-height: 50px;
 				background-color: #DDD;
-				overflow: hidden;
+				overflow: auto;
+				min-width: 100%;
+				max-width: 100%;
 			}
 			
 			.draggable {
@@ -417,7 +422,7 @@
 			
 			function Exercice04_Niveau1()
 			{
-				ExerciceDragable(0,"04",1,"classe","nom");
+				ExerciceDragable(0,"04",1,"sousclasse","nom", "classe");
 			}
 			
 			function Exercice05_Niveau1()
@@ -665,7 +670,7 @@
 			}
 			
 			
-			function ExerciceDragable(DatasetNum, NoQuiz, Difficulty, Group, Classify, special)
+			function ExerciceDragable(DatasetNum, NoQuiz, Difficulty, Group, Classify, alternativeGroup, special)
 			{
 				if(special == 1) { $('#filter_type_forme').prop('checked',true); }
 				if(special == 2) { $('#filter_type_teneur').prop('checked',true);}
@@ -680,7 +685,8 @@
 					return;
 				}
 				
-				var data = GetDataGroupBy([Group,Classify],nbQuestion,null,DatasetNum);
+				
+				var data = GetDataGroupBy([Group,Classify],(nbQuestion == 0 ? 999 : nbQuestion),null,DatasetNum);
 				var datainfo = DataInfo(DatasetNum);
 					
 				var $exercice = $('<div/>');
@@ -702,27 +708,45 @@
 				var values = {};
 				$.each(data, function(index, value)
 				{
-					if(!groups.includes(value[Group]))
+					var groupname = value[Group];
+					if(groupname == "")
+						groupname = value[alternativeGroup];
+					if(!groups.includes(groupname))
 					{
-						groups.push(value[Group]);
-						values[value[Group]] = [];
+						groups.push(groupname);
+						values[groupname] = [];
 					}
-					values[value[Group]].push(value[Classify]);
+					values[groupname].push(value[Classify]);
 				});
 				
-				var $results = $('<div/>');
+				var $results = [];
 				$.each(groups, function(index,value)
 				{
 					$table.append('<div class="group"><div class="header">' + value + '</div><div class="droppable" data-accept="' + value + '"></div></div>');
 					$.each(values[value], function(index2,value2)
 					{
-						$results.append('<div class="draggable" data-answer="' + value + '">' + value2 + '</div>');
+						$results.push('<div class="draggable" data-answer="' + value + '">' + value2 + '</div>');
 					});
 				});
 				
+				
+				
 				$exercice.append($menu);
-				$exercice.append($table);
-				$exercice.append($results);
+				var $grid = $('<div class="row"></div>');
+				var $r = $('<div class="col-2"></div>');
+				var $l = $('<div class="col-10"></div>');
+				$l.append($table);
+				if(nbQuestion == 0)
+				{
+					$results = shuffleArray($results);
+				}
+				$.each($results, function(index, value)
+				{
+					$r.append(value);
+				});
+				$grid.append($l);
+				$grid.append($r);
+				$exercice.append($grid);
 				/*$exercice.find('.answer').each(function() {
 					if($(this).text() == "")
 					{
@@ -747,7 +771,7 @@
 								return true;
 						},
 						drop: function(event, ui) {								
-							self.append(ui.draggable.clone().css({position: 'relative', left: 0, top: 0, width: 'auto', height: 'auto', display: 'block'}));
+							self.prepend(ui.draggable.clone().css({position: 'relative', left: 0, top: 0, width: 'auto', height: 'auto', display: 'block'}));
 							
 							ui.draggable.remove();
 						}
@@ -769,6 +793,16 @@
 				if(special == 2) { $('#filter_type_teneur').prop('checked',false);}
 			}
 			
+
+			function shuffleArray(array) {
+				for (var i = array.length - 1; i > 0; i--) {
+					var j = Math.floor(Math.random() * (i + 1));
+					var temp = array[i];
+					array[i] = array[j];
+					array[j] = temp;
+				}
+				return array;
+			}
 			
 			
 			
