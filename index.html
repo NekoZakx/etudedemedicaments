@@ -816,27 +816,41 @@
 				
 				var $table = $('<div/>');
 				var groups = [];
+				var groupdone = [];
 				var values = {};
 				$.each(data, function(index, value)
 				{
 					var groupname = value[Group];
 					if(groupname == "")
 						groupname = value[alternativeGroup];
-					if(!groups.includes(groupname))
+					if(!groupdone.includes(groupname))
 					{
-						groups.push(groupname);
+						groups.push({group: value[alternativeGroup], name: groupname});
 						values[groupname] = [];
+						groupdone.push(groupname);
 					}
 					values[groupname].push(value[Classify]);
 				});
 				
 				var $results = [];
+				var $groupdiv = null;
+				var lastGroup = "";
 				$.each(groups, function(index,value)
 				{
-					$table.append('<div class="group"><div class="header">' + value + '</div><div class="droppable" data-accept="' + value + '"></div></div>');
-					$.each(values[value], function(index2,value2)
+					if(lastGroup != value.group)
 					{
-						$results.push('<div class="draggable" data-answer="' + value + '">' + value2 + '</div>');
+						if($groupdiv != null)
+						{
+							$table.append('<h3>' + lastGroup + '</h3>');
+							$table.append($groupdiv);
+						}
+						lastGroup = value.group;
+						$groupdiv = $('<div/>');
+					}
+					$groupdiv.append('<div class="group"><div class="header">' + value.name + '</div><div class="droppable" data-accept="' + value.name  + '"></div></div>');
+					$.each(values[value.name], function(index2,value2)
+					{
+						$results.push('<div class="draggable" data-answer="' + value.name + '">' + value2 + '</div>');
 					});
 				});
 				
