@@ -143,6 +143,7 @@
 			.draggable {
 				display: inline-block;
 				padding: 10px;
+				z-index: 99999;
 			}
 			.toggle{
 				position: absolute;
@@ -853,12 +854,14 @@
 						$results.push('<div class="draggable" data-answer="' + value.name + '">' + value2 + '</div>');
 					});
 				});
-				
+				$table.append('<h3>' + lastGroup + '</h3>');
+				$table.append($groupdiv);
+			
 				
 				
 				$exercice.append($menu);
 				var $grid = $('<div class="row"></div>');
-				var $r = $('<div class="col-2" style="max-height: 100%;top: 0;right: 0;position: fixed;overflow: auto;"></div>');
+				var $r = $('<div class="col-2" style="max-height: 100%;top: 0;right: 0;position: fixed;"><button class="btn btn-primary" onclick="$(this).parent().css(\'overflow\',($(this).parent().css(\'overflow\') == \'auto\' ? \'\' : \'auto\'));">Afficher/Cacher Scroll</button></div>');
 				var $l = $('<div class="col-10"></div>');
 				$l.append($table);
 				if(nbQuestion == 0)
