@@ -665,79 +665,79 @@
 			
 			function Exercice11_Facile()
 			{
-				ExerciceTable(2,"01",1,[null,true,true,false,true,true,true,true,true,true]);
+				ExerciceTable(2,"11",1,[null,true,true,false,true,true,true,true]);
 			}
 			function Exercice11_Moyen()
 			{
-				ExerciceTable(2,"01",2,[null,true,true,false,false,false,true,true,true,true]);
+				ExerciceTable(2,"11",2,[null,true,true,false,true,true,true,true]);
 			}
 			function Exercice11_Difficile()
 			{
-				ExerciceTable(2,"01",3,[null,true,true,false,false,false,true,false,false,false]);
+				ExerciceTable(2,"11",3,[null,true,true,false,true,false,false,false]);
 			}
 			function Exercice11_Extreme()
 			{
-				ExerciceTable(2,"01",4,[null,false,false,false,false,false,true,false,false,false]);
+				ExerciceTable(2,"11",4,[null,false,false,false,true,false,false,false]);
 			}
 			
 			function Exercice12_Facile()
 			{
-				ExerciceTable(2,"02",1,[null,null,null,true,true,true,false,null,null,null],["sousclasse","nom","indication"], null, 1);
+				ExerciceTable(2,"12",1,[null,null,null,true,false,null,null,null],["sousclasse","nom"], null, 1);
 			}
 			
 			function Exercice12_Moyen()
 			{
-				ExerciceTable(2,"02",2,[null,null,null,true,false,false,false,null,null,null],["sousclasse","nom","indication"], null, 1);
+				ExerciceTable(2,"12",2,[null,null,null,true,false,null,null,null],["sousclasse","nom"], null, 1);
 			}
 			
 			function Exercice12_Difficile()
 			{
-				ExerciceTable(2,"02",3,[null,null,null,true,true,true,false,null,null,null],["sousclasse","nom","indication"]);
+				ExerciceTable(2,"12",3,[null,null,null,true,false,null,null,null],["sousclasse","nom"]);
 			}
 			
 			function Exercice12_Extreme()
 			{
-				ExerciceTable(2,"02",4,[null,null,null,true,false,false,false,null,null,null],["sousclasse","nom","indication"]);
+				ExerciceTable(2,"12",4,[null,null,null,true,false,null,null,null],["sousclasse","nom"]);
 			}
 			
 			function Exercice13_NomCommun_Facile()
 			{
-				ExerciceTable(2,"03",1,[null,null,null,false,true,null,null,null],["sousclasse","nom"], null, 1, ["nom"]);
+				ExerciceTable(2,"13",1,[null,null,null,false,true,null,null,null],["sousclasse","nom"], null, 1, ["nom"]);
 			}
 			
 			function Exercice13_NomCommun_Difficile()
 			{
-				ExerciceTable(2,"03",3,[null,null,null,false,true,null,null,null],["sousclasse","nom","indication"], null, 0, ["nom"], [{name: "nomcommercial", result: 1}]);
+				ExerciceTable(2,"13",3,[null,null,null,false,true,null,null,null],["sousclasse","nom"], null, 0, ["nom"], [{name: "nomcommercial", result: 1}]);
 			}
 			
 			function Exercice13_NomCommercial_Facile()
 			{
-				ExerciceTable(2,"03",1,[null,null,null,true,false,null,null,null],["sousclasse","nom","indication"], null, 1, ["nomcommercial"]);
+				ExerciceTable(2,"13",1,[null,null,null,true,false,null,null,null],["sousclasse","nom"], null, 1, ["nomcommercial"]);
 			}
 			
 			function Exercice13_NomCommercial_Difficile()
 			{
-				ExerciceTable(2,"03",3,[null,null,null,true,false,null,null,null],["sousclasse","nom","indication"], null, 0, ["nomcommercial"]);
+				ExerciceTable(2,"13",3,[null,null,null,true,false,null,null,null],["sousclasse","nom"], null, 0, ["nomcommercial"]);
 			}
 			
 			function Exercice13_Teneur()
 			{
-				ExerciceTable(2,"03",1,[null,null,null,null,true,true,false,null], ["sousclasse","nom","indication", "nomcommercial","forme"], null, 0, ["teneur"],null,2);
+				ExerciceTable(2,"13",1,[null,null,null,null,true,true,false,null], ["sousclasse","nom","nomcommercial","forme"], null, 0, ["teneur"],null,2);
 			}
 			
 			function Exercice13_SousClasse()
 			{
-				ExerciceTable(2,"03",1,[null,null,false,true,null,null,null,null], ["sousclasse","nom","indication"], null, 0, ["sousclasse"]);
+				ExerciceTable(2,"13",1,[null,null,false,true,null,null,null,null], ["sousclasse","nom"], null, 0, ["sousclasse"]);
 			}
 			
 			function Exercice13_Forme()
 			{
-				ExerciceTable(2,"03",1,[null,null,null,null,true,false,true,null], ["sousclasse","nom","indication", "nomcommercial"], null, 0, ["forme"],null,1);
+				ExerciceTable(2,"13",1,[null,null,null,null,true,false,true,null], ["sousclasse","nom", "nomcommercial"], null, 0, ["forme"],null,1);
 			}
 			
 			function Exercice14_Niveau1()
 			{
-				ExerciceDragable(2,"04",1,"sousclasse","nom", "classe");
+				ExerciceDragable(2,"14",1,"sousclasse","nom", "classe");
 			}
 			
 			
@@ -1376,7 +1376,7 @@
 					lastobj = Object.assign({}, obj);
 					lastobj["ID"] = curExportID++;
 					console.log(lastobj);
-					retval.push(lastobj);
+					retval.push(lastobj);+
 				}
 			 }  
 			 return retval;
