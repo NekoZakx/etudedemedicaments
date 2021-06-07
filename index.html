@@ -702,37 +702,37 @@
 			
 			function Exercice13_NomCommun_Facile()
 			{
-				ExerciceTable(2,"03",1,[null,null,null,false,null,null,true,null,null,null],["sousclasse","nom","indication"], null, 1, ["nom"]);
+				ExerciceTable(2,"03",1,[null,null,null,false,true,null,null,null],["sousclasse","nom"], null, 1, ["nom"]);
 			}
 			
 			function Exercice13_NomCommun_Difficile()
 			{
-				ExerciceTable(2,"03",3,[null,null,null,false,null,null,true,null,null,null],["sousclasse","nom","indication"], null, 0, ["nom"], [{name: "nomcommercial", result: 1}]);
+				ExerciceTable(2,"03",3,[null,null,null,false,true,null,null,null],["sousclasse","nom","indication"], null, 0, ["nom"], [{name: "nomcommercial", result: 1}]);
 			}
 			
 			function Exercice13_NomCommercial_Facile()
 			{
-				ExerciceTable(2,"03",1,[null,null,null,true,null,null,false,null,null,null],["sousclasse","nom","indication"], null, 1, ["nomcommercial"]);
+				ExerciceTable(2,"03",1,[null,null,null,true,false,null,null,null],["sousclasse","nom","indication"], null, 1, ["nomcommercial"]);
 			}
 			
 			function Exercice13_NomCommercial_Difficile()
 			{
-				ExerciceTable(2,"03",3,[null,null,null,true,null,null,false,null,null,null],["sousclasse","nom","indication"], null, 0, ["nomcommercial"]);
+				ExerciceTable(2,"03",3,[null,null,null,true,false,null,null,null],["sousclasse","nom","indication"], null, 0, ["nomcommercial"]);
 			}
 			
 			function Exercice13_Teneur()
 			{
-				ExerciceTable(2,"03",1,[null,null,null,null,null,null,true,true,false,null], ["sousclasse","nom","indication", "nomcommercial","forme"], null, 0, ["teneur"],null,2);
+				ExerciceTable(2,"03",1,[null,null,null,null,true,true,false,null], ["sousclasse","nom","indication", "nomcommercial","forme"], null, 0, ["teneur"],null,2);
 			}
 			
 			function Exercice13_SousClasse()
 			{
-				ExerciceTable(2,"03",1,[null,null,false,true,null,null,null,null,null,null], ["sousclasse","nom","indication"], null, 0, ["sousclasse"]);
+				ExerciceTable(2,"03",1,[null,null,false,true,null,null,null,null], ["sousclasse","nom","indication"], null, 0, ["sousclasse"]);
 			}
 			
 			function Exercice13_Forme()
 			{
-				ExerciceTable(2,"03",1,[null,null,null,null,null,null,true,false,true,null], ["sousclasse","nom","indication", "nomcommercial"], null, 0, ["forme"],null,1);
+				ExerciceTable(2,"03",1,[null,null,null,null,true,false,true,null], ["sousclasse","nom","indication", "nomcommercial"], null, 0, ["forme"],null,1);
 			}
 			
 			function Exercice14_Niveau1()
@@ -1692,10 +1692,8 @@
 				
 				if(FilterData && DatasetNum == 2)
 				{
-				alert(retval.length);
 					var newData = [];
 					$('#FilterV2 .filter_sousclasseV2').each(function(){
-						console.log($(this).val());
 						var $self = $(this);
 						if($self.prop('checked'))
 						{
@@ -1710,7 +1708,6 @@
 						}
 					});
 					retval = newData;
-				alert(retval.length);
 				}
 				
 				if((nbData ?? 0) > 0 && (nbData ?? 0) < 999)
