@@ -231,8 +231,8 @@
 					<input type="checkbox" id="HideSousClasseV2" checked="checked"><label for="HideSousClasseV2">Activer tous les filtres</label>
 					<div id="filters_sousclasseV2"></div>
 				</div>
-				<h6>Sélectionner les numéros de cartes que vous souhaitez pratiquer (Laisser vide pour toutes les cartes)(Séparer par des virgules et utiliser un tiret( - ) pour choisir une plage (exemple: 1,5-10,24 (les cartes 1, 5 à 10 et 24 seront sélectionnées)).</h6>
-				<div id="filters_card">
+				<h6 style="display: none">Sélectionner les numéros de cartes que vous souhaitez pratiquer (Laisser vide pour toutes les cartes)(Séparer par des virgules et utiliser un tiret( - ) pour choisir une plage (exemple: 1,5-10,24 (les cartes 1, 5 à 10 et 24 seront sélectionnées)).</h6>
+				<div id="filters_card" style="display: none">
 					<input type="text" id="filter_card" placeholder="exemple: 1,5-10,24" />
 				</div>
 				<div style="display: none">
@@ -1733,6 +1733,11 @@
 				}
 				return result;
 			}
+			window.onbeforeunload = function() {
+			   return "Veux-tu vraiment quitter?";
+			   //if we return nothing here (just calling return;) then there will be no pop-up question at all
+			   //return;
+			};
 		</script>
 	</body>
 </html>
