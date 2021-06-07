@@ -221,9 +221,16 @@
 			</div>
 			<div id="filters">
 				<h2>Filtres</h2>
-				<h6>Sélectionner les sous-classes thérapeutique à étudier, votre sélection sera appliqué lors du chargement d'une activité.</h6>
-				<input type="checkbox" id="HideSousClasse" checked="checked"><label for="HideSousClasse">Activer tous les filtres</label>
-				<div id="filters_sousclasse"></div>
+				<div id="FilterV0" class="MainFilter">
+					<h6>Sélectionner les sous-classes thérapeutique à étudier, votre sélection sera appliqué lors du chargement d'une activité.</h6>
+					<input type="checkbox" id="HideSousClasse" checked="checked"><label for="HideSousClasse">Activer tous les filtres</label>
+					<div id="filters_sousclasse"></div>
+				</div>
+				<div id="FilterV2" class="MainFilter">
+					<h6>V2 : Sélectionner les sous-classes thérapeutique à étudier, votre sélection sera appliqué lors du chargement d'une activité.</h6>
+					<input type="checkbox" id="HideSousClasseV2" checked="checked"><label for="HideSousClasseV2">Activer tous les filtres</label>
+					<div id="filters_sousclasseV2"></div>
+				</div>
 				<h6>Sélectionner les numéros de cartes que vous souhaitez pratiquer (Laisser vide pour toutes les cartes)(Séparer par des virgules et utiliser un tiret( - ) pour choisir une plage (exemple: 1,5-10,24 (les cartes 1, 5 à 10 et 24 seront sélectionnées)).</h6>
 				<div id="filters_card">
 					<input type="text" id="filter_card" placeholder="exemple: 1,5-10,24" />
@@ -271,7 +278,7 @@
 					<ul>
 						<li>Saisir les informations manquantes à partir du nom commercial</li>
 					</ul>
-					<input type="button" class="btn btn-primary" value="Tableau" onclick="$('#mainmenu').fadeOut(300,function() { $('#Exercice1').fadeIn(300); });" />
+					<input type="button" class="btn btn-primary" value="Tableau" onclick="$('#mainmenu').fadeOut(300,function() { $('#Exercice12').fadeIn(300); });" />
 					<ul>
 						<li>Saisir les informations manquantes à partir du nom commun</li>
 					</ul>
@@ -1517,6 +1524,19 @@
 						$('[data-class]').html("-");
 					}*/
 				});
+				$('#HideSousClasseV2').change(function(){
+					
+					$('#filters_sousclasseV2 input[type=checkbox]').prop('checked',$('#HideSousClasseV2').prop('checked'));
+					/*if($('#HideSousClasse').prop('checked'))
+					{
+						$('.form-check[data-parent]').slideUp();
+						$('[data-class]').html("+");
+					}else{
+						$('.form-check[data-parent]').slideDown();
+						$('[data-class]').html("-");
+					}*/
+				});
+				
 				FilterData = false;
 				var sousclasses = [];
 				var classes = [];
@@ -1539,14 +1559,35 @@
 					}
 				});
 				
+				sousclasses = [];
+				classes = [];
+				var dataV2 = GetData(999999, 2).sort(compareCardsID);
+				$.each(dataV2, function(index, value){
+					if(!classes.includes(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","")))
+					{
+						classes.push(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""));
+						var guid = CreateGuid();
+						$("#filters_sousclasseV2").append('<div class="parentFilter form-check"><span class="toggle" data-class="' + value.classe + '">+</span><input id="' + guid + '" class="form-check-input" onclick="ClearClassCategory($(this))" type="checkbox" value="' + value.classe + '" checked="checked"/><label class="form-check-label" for="' + guid + '">' + 
+							(value.classe != "" ? value.classe : "Aucune classe") + " (" + CountElements("classe", value.classe) + ")" + '</label>');
+					}
+				
+					if(!sousclasses.includes(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","") + "." + value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","")))
+					{
+						sousclasses.push(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","") + "." + value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""));
+						var guid = CreateGuid();
+						$("#filters_sousclasseV2").append('<div class="childfilter form-check" style="' + ($('#HideSousClasseV2').prop('checked') ? "display: none;" : "") + '" data-parent="' + value.classe + '"><input id="' + guid + '" class="filter_sousclasseV2 form-check-input" type="checkbox" value="' + (value.sousclasse != "" ? value.sousclasse : value.classe) + '" checked="checked"/><label class="form-check-label" for="' + guid + '">' + 
+							(value.sousclasse != "" ? value.sousclasse : "Aucune sous-classe") + " (" + CountElements("sousclasse", value.sousclasse) + ")" + '</label>');
+					}
+				});
+				
 				$('[data-class]').click(function(){
-					if($('.form-check[data-parent="' + $(this).attr('data-class') + '"]').css('display') == "none")
+					if($(this).closest('.MainFilter').find('.form-check[data-parent="' + $(this).attr('data-class') + '"]').css('display') == "none")
 					{
 						$(this).html("-");
 					}else{
 						$(this).html("+");
 					}
-					$('.form-check[data-parent="' + $(this).attr('data-class') + '"]').slideToggle();
+					$(this).closest('.MainFilter').find('.form-check[data-parent="' + $(this).attr('data-class') + '"]').slideToggle();
 				});
 				
 				FilterData = true;
@@ -1554,7 +1595,8 @@
 			
 			function ClearClassCategory($category)
 			{
-				$('[data-parent="' + $category.val() + '"] .filter_sousclasse').prop('checked',$category.prop('checked'));
+				$category.closest('.MainFilter').find('[data-parent="' + $category.val() + '"] .filter_sousclasse').prop('checked',$category.prop('checked'));
+				$category.closest('.MainFilter').find('[data-parent="' + $category.val() + '"] .filter_sousclasseV2').prop('checked',$category.prop('checked'));
 			}
 			
 			function GetData(nbData, DatasetNum, useAll) { 
@@ -1589,7 +1631,7 @@
 				if(FilterData && DatasetNum == 0)
 				{
 					var newData = [];
-					$('.filter_sousclasse').each(function(){
+					$('#FilterV0 .filter_sousclasse').each(function(){
 						var $self = $(this);
 						if($self.prop('checked'))
 						{
@@ -1646,6 +1688,29 @@
 						});
 						retval = newData;
 					}
+				}
+				
+				if(FilterData && DatasetNum == 2)
+				{
+				alert(retval.length);
+					var newData = [];
+					$('#FilterV2 .filter_sousclasseV2').each(function(){
+						console.log($(this).val());
+						var $self = $(this);
+						if($self.prop('checked'))
+						{
+							console.log("PUSHED");
+							$.each(retval, function(index, value)
+							{
+								if((value.sousclasse != "" ? value.sousclasse : value.classe).replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","") == $self.val().replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""))
+								{
+									newData.push(value);
+								}
+							});
+						}
+					});
+					retval = newData;
+				alert(retval.length);
 				}
 				
 				if((nbData ?? 0) > 0 && (nbData ?? 0) < 999)
