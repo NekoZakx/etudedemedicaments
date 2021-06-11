@@ -867,7 +867,20 @@
 				
 				
 					
-				var biggerColIndexes = (DatasetNum == 0 ? [2,3,6] : []);
+				var biggerColIndexes = [];
+				switch(DatasetNum)
+				{
+					case 0:
+						biggerColIndexes = [2,3,6];
+						break;
+					case 1:
+						biggerColIndexes = [2,3,4];
+						break;
+				
+				}
+				
+				
+				
 				var altColIndexes = (DatasetNum == 0 ? [6,8] : []);
 				var optionColIndexes = (DatasetNum == 0 ? [1,2,4] : [1]);
 				
