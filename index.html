@@ -230,6 +230,7 @@
 				<div id="filters" class="col-md-6">
 				
 					<div id="voletSelector">
+						V0.0.67
 						<input type="button" class="btn btn-primary" value="Non-parentéraux" onclick="$('.volet').css('display','none');$('.volet1').fadeIn();" />
 						<input type="button" class="btn btn-primary" value="Parentéraux" onclick="$('.volet').css('display','none');$('.volet2').fadeIn();" />
 						<h1 class="volet volet1">Non-parentéraux</h1>
@@ -940,7 +941,6 @@
 					var objAlt = '<div class="title">[TITLE] ([NB])</div><textarea class="input form-control" data-minimalgoodanswer="' + nbGoodAnswer + '" data-answer="[ANSWER]"></textarea><div class="answer">[ANSWERCLEAN]</div>';
 					var objSelection = '<div class="title">[TITLE]</div><select class="input form-control selectionable" data-minimalgoodanswer="' + nbGoodAnswer + '" data-answer="[ANSWER]">[OPTIONS]</select><div class="answer">[ANSWERCLEAN]</div>';
 					
-					
 					var $row = $('<div/>').addClass("row");
 					
 					var gridData = [];
@@ -961,7 +961,13 @@
 					
 					
 					
+					var ShowRow = false;
 					$.each(gridData, function(index2, value2) {
+						if((ShowArr[index2] ?? true) == false && (value2.value ?? "").replaceAll(" ","") != "")
+						{
+							ShowRow = true;
+						}
+					
 						var options = '<option value=""></option>';
 						switch(index2)
 						{
@@ -991,14 +997,13 @@
 										.attr("data-showanswer",((ShowArr[index2] ?? true) ? "1" : "0"))
 										.html((altColIndexes.includes(index2) ? objAlt : (optionColIndexes.includes(index2) ? objSelection : obj))
 												.replace('[TITLE]', datainfo[index2].text)
-												.replace('[ANSWERCLEAN]',value2.value.replaceAll(',','<br/>'))
+												.replace('[ANSWERCLEAN]',(value2.value ?? "").toString().replaceAll(',','<br/>'))
 												.replace('[ANSWER]',$('<div>' + value2.value + '</div>').text())
-												.replace("[NB]",value2.value.split(',').length)
+												.replace("[NB]",(value2.value ?? "").toString().split(',').length)
 												.replace("[OPTIONS]",options)));
-						//console.log(value2.value);
 					});
 					
-					$table.append($row);
+					if(ShowRow) $table.append($row);
 				});
 				$exercice.append($menu);
 				$exercice.append($table);
