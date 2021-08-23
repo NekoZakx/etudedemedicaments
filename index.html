@@ -230,8 +230,8 @@
 				<div id="filters" class="col-md-6">
 				
 					<div id="voletSelector">
-						<input type="button" class="btn btn-primary" value="Volet 1" onclick="$('.volet').css('display','none');$('.volet1').fadeIn();" />
-						<input type="button" class="btn btn-primary" value="Volet 2" onclick="$('.volet').css('display','none');$('.volet2').fadeIn();" />
+						<input type="button" class="btn btn-primary" value="Non-parentéraux" onclick="$('.volet').css('display','none');$('.volet1').fadeIn();" />
+						<input type="button" class="btn btn-primary" value="Parentéraux" onclick="$('.volet').css('display','none');$('.volet2').fadeIn();" />
 						<h1 class="volet volet1">Non-parentéraux</h1>
 						<h1 class="volet volet2">Parentéraux</h1>
 					</div>
@@ -1520,11 +1520,11 @@
 			  return 0;
 			}
 			
-			function CountElements(name, text)
+			function CountElements(name, text, DatabaseNum)
 			{
 				var retval = 0;
 				var lastNum = -1;
-				$.each(GetData().sort(compareCardsID),function(index,value)
+				$.each(GetData(999999, DatabaseNum).sort(compareCardsID),function(index,value)
 				{
 					if(lastNum != value.num)
 					{
@@ -1577,7 +1577,7 @@
 						classes.push(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""));
 						var guid = CreateGuid();
 						$("#filters_sousclasse").append('<div class="parentFilter form-check"><span class="toggle" data-class="' + value.classe + '">+</span><input id="' + guid + '" class="form-check-input" onclick="ClearClassCategory($(this))" type="checkbox" value="' + value.classe + '" checked="checked"/><label class="form-check-label" for="' + guid + '">' + 
-							(value.classe != "" ? value.classe : "Aucune classe") + " (" + CountElements("classe", value.classe) + ")" + '</label>');
+							(value.classe != "" ? value.classe : "Aucune classe") + " (" + CountElements("classe", value.classe, 0) + ")" + '</label>');
 					}
 				
 					if(!sousclasses.includes(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","") + "." + value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","")))
@@ -1585,7 +1585,7 @@
 						sousclasses.push(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","") + "." + value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""));
 						var guid = CreateGuid();
 						$("#filters_sousclasse").append('<div class="childfilter form-check" style="' + ($('#HideSousClasse').prop('checked') ? "display: none;" : "") + '" data-parent="' + value.classe + '"><input id="' + guid + '" class="filter_sousclasse form-check-input" type="checkbox" value="' + (value.sousclasse != "" ? value.sousclasse : value.classe) + '" checked="checked"/><label class="form-check-label" for="' + guid + '">' + 
-							(value.sousclasse != "" ? value.sousclasse : "Aucune sous-classe") + " (" + CountElements("sousclasse", value.sousclasse) + ")" + '</label>');
+							(value.sousclasse != "" ? value.sousclasse : "Aucune sous-classe") + " (" + CountElements("sousclasse", value.sousclasse, 0) + ")" + '</label>');
 					}
 				});
 				
@@ -1598,7 +1598,7 @@
 						classes.push(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""));
 						var guid = CreateGuid();
 						$("#filters_sousclasseV2").append('<div class="parentFilter form-check"><span class="toggle" data-class="' + value.classe + '">+</span><input id="' + guid + '" class="form-check-input" onclick="ClearClassCategory($(this))" type="checkbox" value="' + value.classe + '" checked="checked"/><label class="form-check-label" for="' + guid + '">' + 
-							(value.classe != "" ? value.classe : "Aucune classe") + " (" + CountElements("classe", value.classe) + ")" + '</label>');
+							(value.classe != "" ? value.classe : "Aucune classe") + " (" + CountElements("classe", value.classe, 2) + ")" + '</label>');
 					}
 				
 					if(!sousclasses.includes(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","") + "." + value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","")))
@@ -1606,7 +1606,7 @@
 						sousclasses.push(value.classe.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ","") + "." + value.sousclasse.replace(/(?:\r\n|\r|\n)/g, "").replaceAll(" ",""));
 						var guid = CreateGuid();
 						$("#filters_sousclasseV2").append('<div class="childfilter form-check" style="' + ($('#HideSousClasseV2').prop('checked') ? "display: none;" : "") + '" data-parent="' + value.classe + '"><input id="' + guid + '" class="filter_sousclasseV2 form-check-input" type="checkbox" value="' + (value.sousclasse != "" ? value.sousclasse : value.classe) + '" checked="checked"/><label class="form-check-label" for="' + guid + '">' + 
-							(value.sousclasse != "" ? value.sousclasse : "Aucune sous-classe") + " (" + CountElements("sousclasse", value.sousclasse) + ")" + '</label>');
+							(value.sousclasse != "" ? value.sousclasse : "Aucune sous-classe") + " (" + CountElements("sousclasse", value.sousclasse, 2) + ")" + '</label>');
 					}
 				});
 				
