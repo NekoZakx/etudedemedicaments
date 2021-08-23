@@ -207,7 +207,7 @@
 	<body>
 		<div class="lds-ring loading"><div></div><div></div><div></div><div></div></div>
 		<div id="program" style="display: none;">
-			<div id="progamSave" class="volet volet1 volet2">
+			<div id="progamSave" style="display: none">
 				<input type="button" class="btn btn-primary" value="Voir/Cacher la liste d'import/export" onclick="$('#ProgramSaveTable').slideToggle();" />
 				<input type="button" class="btn btn-primary" value="Importation" onclick="Import();" />
 				<input type="button" class="btn btn-primary" value="Exportation" onclick="Export();" />
@@ -309,197 +309,200 @@
 					</fieldset>
 				</div>
 				
-				<div id="Exercice01" class="game col-md-6">
-					<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice01').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
-					<h2>Tableau complet</h2>
-					<fieldset>
-						<legend>À partir du nom commercial</legend>
-						<input type="button" class="btn btn-primary" value="Facile" onclick="Exercice01_Facile()" />
-						<ul>
-							<li>Saisir le nom commun</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Moyen" onclick="Exercice01_Moyen()" />
-						<ul>
-							<li>Saisir le nom commun, l'indication et la classe légale</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Difficile" onclick="Exercice01_Difficile()" />
-						<ul>
-							<li>Saisir le nom commun, l'indication,la classe légale, la forme, la teneur et la voie</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Extrême" onclick="Exercice01_Extreme()" />
-						<ul>
-							<li>Saisir toutes les informations, excepté le nom commercial</li>
-						</ul>
-					</fieldset>
+				<div class="volet volet1 col-md-6">
+					<div id="Exercice01" class="game">
+						<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice01').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
+						<h2>Tableau complet</h2>
+						<fieldset>
+							<legend>À partir du nom commercial</legend>
+							<input type="button" class="btn btn-primary" value="Facile" onclick="Exercice01_Facile()" />
+							<ul>
+								<li>Saisir le nom commun</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Moyen" onclick="Exercice01_Moyen()" />
+							<ul>
+								<li>Saisir le nom commun, l'indication et la classe légale</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Difficile" onclick="Exercice01_Difficile()" />
+							<ul>
+								<li>Saisir le nom commun, l'indication,la classe légale, la forme, la teneur et la voie</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Extrême" onclick="Exercice01_Extreme()" />
+							<ul>
+								<li>Saisir toutes les informations, excepté le nom commercial</li>
+							</ul>
+						</fieldset>
+					</div>
+					<div id="Exercice02" class="game">
+						<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice02').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
+						<h2>Tableau</h2>
+						<fieldset>
+							<legend>À partir du nom commun</legend>
+							<input type="button" class="btn btn-primary" value="Facile" onclick="Exercice02_Facile()" />
+							<ul>
+								<li>Saisir au minimum un nom commercial</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Moyen" onclick="Exercice02_Moyen()" />
+							<ul>
+								<li>Saisir au minimum un nom commercial, les classes légales et les indications</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Difficile" onclick="Exercice02_Difficile()" />
+							<ul>
+								<li>Saisir tous les noms commerciaux</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Extrême" onclick="Exercice02_Extreme()" />
+							<ul>
+								<li>Saisir tous les noms commerciaux, les classes légales et les indications</li>
+							</ul>
+						</fieldset>
+					</div>
+					<div id="Exercice03" class="game">
+						<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice03').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
+						<h2>Association</h2>
+						<fieldset>
+							<input type="button" class="btn btn-primary" value="Nom commun (Facile)" onclick="Exercice03_NomCommun_Facile()" />
+							<ul>
+								<li>Vous devez trouver le nom commun à partir du ou des nom commerciaux</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Nom commun (Difficile)" onclick="Exercice03_NomCommun_Difficile()" />
+							<ul>
+								<li>Vous devez trouver le nom commun associer à un seul nom commercial</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Nom commercial (Facile)" onclick="Exercice03_NomCommercial_Facile()" />
+							<ul>
+								<li>Vous devez trouver un nom commercial à partir du nom commun</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Nom commercial (Difficile)" onclick="Exercice03_NomCommercial_Difficile()" />
+							<ul>
+								<li>Vous devez trouver tous les noms commerciaux à partir du nom commun</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Teneur" onclick="Exercice03_Teneur()" />
+							<ul>
+								<li>Vous devez trouver les teneurs à partir du nom commercial et de la forme</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Forme" onclick="Exercice03_Forme()" />
+							<ul>
+								<li>Vous devez trouver les formes à partir du nom commercial et de la teneur</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Sous-classe thérapeutique" onclick="Exercice03_SousClasse()" />
+							<ul>
+								<li>Vous devez trouver la sous-classe thérapeutique à partir du nom commun</li>
+							</ul>
+						</fieldset>
+					</div>
+					<div id="Exercice04" class="game">
+						<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice04').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
+						<h2>Glisser déplacer</h2>
+						<fieldset>
+							<input type="button" class="btn btn-primary" value="Classe et nom commun" onclick="Exercice04_Niveau1()" />
+							<ul>
+								<li>Vous devez trouver le nom commun à partir du ou des nom commerciaux</li>
+							</ul>
+						</fieldset>
+					</div>
 				</div>
-				<div id="Exercice02" class="game col-md-6">
-					<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice02').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
-					<h2>Tableau</h2>
-					<fieldset>
-						<legend>À partir du nom commun</legend>
-						<input type="button" class="btn btn-primary" value="Facile" onclick="Exercice02_Facile()" />
-						<ul>
-							<li>Saisir au minimum un nom commercial</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Moyen" onclick="Exercice02_Moyen()" />
-						<ul>
-							<li>Saisir au minimum un nom commercial, les classes légales et les indications</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Difficile" onclick="Exercice02_Difficile()" />
-						<ul>
-							<li>Saisir tous les noms commerciaux</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Extrême" onclick="Exercice02_Extreme()" />
-						<ul>
-							<li>Saisir tous les noms commerciaux, les classes légales et les indications</li>
-						</ul>
-					</fieldset>
+				<div class="volet volet2 col-md-6">
+					<div id="Exercice11" class="game">
+						<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice11').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
+						<h2>Tableau complet</h2>
+						<fieldset>
+							<legend>À partir du nom commercial</legend>
+							<input type="button" class="btn btn-primary" value="Facile" onclick="Exercice11_Facile()" />
+							<ul>
+								<li>Saisir le nom commun</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Moyen" onclick="Exercice11_Moyen()" />
+							<ul>
+								<li>Saisir le nom commun, l'indication et la classe légale</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Difficile" onclick="Exercice11_Difficile()" />
+							<ul>
+								<li>Saisir le nom commun, l'indication,la classe légale, la forme, la teneur et la voie</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Extrême" onclick="Exercice11_Extreme()" />
+							<ul>
+								<li>Saisir toutes les informations, excepté le nom commercial</li>
+							</ul>
+						</fieldset>
+					</div>
+					<div id="Exercice12" class="game">
+						<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice12').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
+						<h2>Tableau</h2>
+						<fieldset>
+							<legend>À partir du nom commun</legend>
+							<input type="button" class="btn btn-primary" value="Facile" onclick="Exercice12_Facile()" />
+							<ul>
+								<li>Saisir au minimum un nom commercial</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Moyen" onclick="Exercice12_Moyen()" />
+							<ul>
+								<li>Saisir au minimum un nom commercial, les classes légales et les indications</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Difficile" onclick="Exercice12_Difficile()" />
+							<ul>
+								<li>Saisir tous les noms commerciaux</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Extrême" onclick="Exercice12_Extreme()" />
+							<ul>
+								<li>Saisir tous les noms commerciaux, les classes légales et les indications</li>
+							</ul>
+						</fieldset>
+					</div>
+					<div id="Exercice13" class="game">
+						<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice13').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
+						<h2>Association</h2>
+						<fieldset>
+							<input type="button" class="btn btn-primary" value="Nom commun (Facile)" onclick="Exercice13_NomCommun_Facile()" />
+							<ul>
+								<li>Vous devez trouver le nom commun à partir du ou des nom commerciaux</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Nom commun (Difficile)" onclick="Exercice13_NomCommun_Difficile()" />
+							<ul>
+								<li>Vous devez trouver le nom commun associer à un seul nom commercial</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Nom commercial (Facile)" onclick="Exercice13_NomCommercial_Facile()" />
+							<ul>
+								<li>Vous devez trouver un nom commercial à partir du nom commun</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Nom commercial (Difficile)" onclick="Exercice13_NomCommercial_Difficile()" />
+							<ul>
+								<li>Vous devez trouver tous les noms commerciaux à partir du nom commun</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Teneur" onclick="Exercice13_Teneur()" />
+							<ul>
+								<li>Vous devez trouver les teneurs à partir du nom commercial et de la forme</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Forme" onclick="Exercice13_Forme()" />
+							<ul>
+								<li>Vous devez trouver les formes à partir du nom commercial et de la teneur</li>
+							</ul>
+							<input type="button" class="btn btn-primary" value="Sous-classe thérapeutique" onclick="Exercice13_SousClasse()" />
+							<ul>
+								<li>Vous devez trouver la sous-classe thérapeutique à partir du nom commun</li>
+							</ul>
+						</fieldset>
+					</div>
+					<div id="Exercice14" class="game">
+						<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice14').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
+						<h2>Glisser déplacer</h2>
+						<fieldset>
+							<input type="button" class="btn btn-primary" value="Classe et nom commun" onclick="Exercice14_Niveau1()" />
+							<ul>
+								<li>Vous devez trouver le nom commun à partir du ou des nom commerciaux</li>
+							</ul>
+						</fieldset>
+					</div>
+					<div id="Exercice05" class="game">
+						<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice05').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
+						<h2>MVL</h2>
+						<fieldset>
+							<input type="button" class="btn btn-primary" value="Test" onclick="Exercice05_Niveau1()" />
+							<ul>
+								<li>Texte en attente</li>
+							</ul>
+						</fieldset>
+					</div>
 				</div>
-				<div id="Exercice03" class="game col-md-6">
-					<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice03').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
-					<h2>Association</h2>
-					<fieldset>
-						<input type="button" class="btn btn-primary" value="Nom commun (Facile)" onclick="Exercice03_NomCommun_Facile()" />
-						<ul>
-							<li>Vous devez trouver le nom commun à partir du ou des nom commerciaux</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Nom commun (Difficile)" onclick="Exercice03_NomCommun_Difficile()" />
-						<ul>
-							<li>Vous devez trouver le nom commun associer à un seul nom commercial</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Nom commercial (Facile)" onclick="Exercice03_NomCommercial_Facile()" />
-						<ul>
-							<li>Vous devez trouver un nom commercial à partir du nom commun</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Nom commercial (Difficile)" onclick="Exercice03_NomCommercial_Difficile()" />
-						<ul>
-							<li>Vous devez trouver tous les noms commerciaux à partir du nom commun</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Teneur" onclick="Exercice03_Teneur()" />
-						<ul>
-							<li>Vous devez trouver les teneurs à partir du nom commercial et de la forme</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Forme" onclick="Exercice03_Forme()" />
-						<ul>
-							<li>Vous devez trouver les formes à partir du nom commercial et de la teneur</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Sous-classe thérapeutique" onclick="Exercice03_SousClasse()" />
-						<ul>
-							<li>Vous devez trouver la sous-classe thérapeutique à partir du nom commun</li>
-						</ul>
-					</fieldset>
-				</div>
-				<div id="Exercice04" class="game col-md-6">
-					<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice04').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
-					<h2>Glisser déplacer</h2>
-					<fieldset>
-						<input type="button" class="btn btn-primary" value="Classe et nom commun" onclick="Exercice04_Niveau1()" />
-						<ul>
-							<li>Vous devez trouver le nom commun à partir du ou des nom commerciaux</li>
-						</ul>
-					</fieldset>
-				</div>
-				<div id="Exercice11" class="game col-md-6">
-					<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice11').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
-					<h2>Tableau complet</h2>
-					<fieldset>
-						<legend>À partir du nom commercial</legend>
-						<input type="button" class="btn btn-primary" value="Facile" onclick="Exercice11_Facile()" />
-						<ul>
-							<li>Saisir le nom commun</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Moyen" onclick="Exercice11_Moyen()" />
-						<ul>
-							<li>Saisir le nom commun, l'indication et la classe légale</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Difficile" onclick="Exercice11_Difficile()" />
-						<ul>
-							<li>Saisir le nom commun, l'indication,la classe légale, la forme, la teneur et la voie</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Extrême" onclick="Exercice11_Extreme()" />
-						<ul>
-							<li>Saisir toutes les informations, excepté le nom commercial</li>
-						</ul>
-					</fieldset>
-				</div>
-				<div id="Exercice12" class="game col-md-6">
-					<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice12').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
-					<h2>Tableau</h2>
-					<fieldset>
-						<legend>À partir du nom commun</legend>
-						<input type="button" class="btn btn-primary" value="Facile" onclick="Exercice12_Facile()" />
-						<ul>
-							<li>Saisir au minimum un nom commercial</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Moyen" onclick="Exercice12_Moyen()" />
-						<ul>
-							<li>Saisir au minimum un nom commercial, les classes légales et les indications</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Difficile" onclick="Exercice12_Difficile()" />
-						<ul>
-							<li>Saisir tous les noms commerciaux</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Extrême" onclick="Exercice12_Extreme()" />
-						<ul>
-							<li>Saisir tous les noms commerciaux, les classes légales et les indications</li>
-						</ul>
-					</fieldset>
-				</div>
-				<div id="Exercice13" class="game col-md-6">
-					<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice13').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
-					<h2>Association</h2>
-					<fieldset>
-						<input type="button" class="btn btn-primary" value="Nom commun (Facile)" onclick="Exercice13_NomCommun_Facile()" />
-						<ul>
-							<li>Vous devez trouver le nom commun à partir du ou des nom commerciaux</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Nom commun (Difficile)" onclick="Exercice13_NomCommun_Difficile()" />
-						<ul>
-							<li>Vous devez trouver le nom commun associer à un seul nom commercial</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Nom commercial (Facile)" onclick="Exercice13_NomCommercial_Facile()" />
-						<ul>
-							<li>Vous devez trouver un nom commercial à partir du nom commun</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Nom commercial (Difficile)" onclick="Exercice13_NomCommercial_Difficile()" />
-						<ul>
-							<li>Vous devez trouver tous les noms commerciaux à partir du nom commun</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Teneur" onclick="Exercice13_Teneur()" />
-						<ul>
-							<li>Vous devez trouver les teneurs à partir du nom commercial et de la forme</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Forme" onclick="Exercice13_Forme()" />
-						<ul>
-							<li>Vous devez trouver les formes à partir du nom commercial et de la teneur</li>
-						</ul>
-						<input type="button" class="btn btn-primary" value="Sous-classe thérapeutique" onclick="Exercice13_SousClasse()" />
-						<ul>
-							<li>Vous devez trouver la sous-classe thérapeutique à partir du nom commun</li>
-						</ul>
-					</fieldset>
-				</div>
-				<div id="Exercice14" class="game col-md-6">
-					<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice14').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
-					<h2>Glisser déplacer</h2>
-					<fieldset>
-						<input type="button" class="btn btn-primary" value="Classe et nom commun" onclick="Exercice14_Niveau1()" />
-						<ul>
-							<li>Vous devez trouver le nom commun à partir du ou des nom commerciaux</li>
-						</ul>
-					</fieldset>
-				</div>
-				<div id="Exercice05" class="game col-md-6">
-					<input class="backbutton btn btn-secondary" type="button" value="Retour vers la liste des activités" onclick="$('#Exercice05').fadeOut(300,function() { $('#mainmenu').fadeIn(300); });" />
-					<h2>MVL</h2>
-					<fieldset>
-						<input type="button" class="btn btn-primary" value="Test" onclick="Exercice05_Niveau1()" />
-						<ul>
-							<li>Texte en attente</li>
-						</ul>
-					</fieldset>
-				</div>
-			
 			</div>
 			<div id="exercices" class="container-fluid"></div>
 		</div>
@@ -899,7 +902,8 @@
 				
 				
 				var altColIndexes = (DatasetNum == 0 ? [6,8] : []);
-				var optionColIndexes = (DatasetNum == 0 ? [1,2,4] : [1]);
+				var optionColIndexes = (DatasetNum == 0 ? [1,2,4] : [2]);
+				
 				
 				var Options1 = [];
 				var Options2 = [];
@@ -919,7 +923,6 @@
 					Options2 = GetUniqueValues(Options2).sort();
 				if(optionColIndexes.includes(4))
 					Options4 = GetUniqueValues(Options4).sort();	
-				
 				
 				var $table = $('<div/>');
 				
