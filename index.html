@@ -481,6 +481,10 @@
 							<ul>
 								<li>Vous devez trouver la sous-classe thérapeutique à partir du nom commun</li>
 							</ul>
+							<input type="button" class="btn btn-primary" value="Voie d'administration" onclick="Exercice13_Voie()" />
+							<ul>
+								<li>Vous devez trouver la voie d'administration à partir du nom commun</li>
+							</ul>
 						</fieldset>
 					</div>
 					<div id="Exercice14" class="game">
@@ -749,6 +753,11 @@
 			function Exercice13_SousClasse()
 			{
 				ExerciceTable(2,"13",1,[null,null,false,true,null,null,null,null], ["sousclasse","nom"], null, 0, ["sousclasse"]);
+			}
+			
+			function Exercice13_Voie()
+			{
+				ExerciceTable(2,"13",1,[null,null,null,null,true,null,null,false], ["voie","nomcommercial"], null, 0, ["voie"]);
 			}
 			
 			function Exercice13_Forme()
